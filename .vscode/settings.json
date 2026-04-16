@@ -1,0 +1,26 @@
+{
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.cStandard": "c17",
+  "C_Cpp.default.compilerPath": "/usr/bin/g++",
+  "C_Cpp.default.intelliSenseEngine": "default",
+  "C_Cpp.formatting": "clangFormat",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-vscode.cpptools",
+  "files.exclude": {
+    "**/.git": true,
+    "**/build": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true
+  },
+  "cmake.builds": [
+    {
+      "directory": "${workspaceFolder}/build",
+      "target": "all"
+    }
+  ],
+  "cmake.configureOnOpen": true,
+  "cmake.buildDirectory": "${workspaceFolder}/build"
+}

@@ -1,0 +1,32 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../reference"
+    }
+  ],
+  "settings": {
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c17",
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    "C_Cpp.default.intelliSenseEngine": "default",
+    "C_Cpp.formatting": "clangFormat",
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "cmake.configureOnOpen": true,
+    "cmake.buildDirectory": "${workspaceFolder}/build"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.cpptools",
+      "ms-vscode.cmake-tools",
+      "ms-vscode.cpptools-themes",
+      "ms-vscode-remote.remote-ssh",
+      "ms-vscode.makefile-tools",
+      "usernamehw.errorlens",
+      "eamodio.gitlens"
+    ]
+  }
+}
