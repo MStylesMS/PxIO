@@ -17,7 +17,7 @@ void signalHandler(int signo)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "PIo - Paradox IO" << std::endl;
+    std::cout << "Pio - Paradox IO" << std::endl;
     std::cout << "GPIO to MQTT Bridge for Raspberry Pi, ESP32, and other devices" << std::endl;
     std::cout << "================================================================\n"
               << std::endl;

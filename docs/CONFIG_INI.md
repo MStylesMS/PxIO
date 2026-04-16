@@ -1,11 +1,11 @@
-# PIo INI Configuration Guide
+# Pio INI Configuration Guide
 
 Version: 0.2.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-PIo uses INI files for bridge configuration.
+Pio uses INI files for bridge configuration.
 
 INI responsibilities:
 - MQTT broker and topic settings
@@ -30,7 +30,7 @@ pio --config /etc/pio/bridge-a.ini
 pio -c /etc/pio/bridge-a.ini
 
 Startup behavior:
-- If config file is missing or invalid, PIo exits with fatal error.
+- If config file is missing or invalid, Pio exits with fatal error.
 - Active config path is included in startup logs.
 - Active config path is included in online announcement payload.
 
@@ -105,10 +105,10 @@ MQTT connection and contract topics.
 | qos | integer | No | 1 | Default publish QoS (0..2) |
 | global_retain | boolean | No | false | Default retain behavior for IO topics |
 | base_topic | string | Yes | N/A | Prefix for relative io_topic values |
-| commands_topic | string | Yes | N/A | PIo command input topic |
-| state_topic | string | Yes | N/A | PIo state output topic |
-| events_topic | string | Yes | N/A | PIo event output topic |
-| warnings_topic | string | Yes | N/A | PIo warnings/errors topic |
+| commands_topic | string | Yes | N/A | Pio command input topic |
+| state_topic | string | Yes | N/A | Pio state output topic |
+| events_topic | string | Yes | N/A | Pio event output topic |
+| warnings_topic | string | Yes | N/A | Pio warnings/errors topic |
 | announce_topic | string | Yes | N/A | One-shot online announcement topic |
 | heartbeat_topic | string | Yes | N/A | Periodic heartbeat topic |
 | heartbeat_interval_ms | integer | No | 5000 | Heartbeat period in ms |
@@ -297,7 +297,7 @@ scan_interval_ms = 100
 
 ## Validation Rules
 
-PIo validates configuration at startup.
+Pio validates configuration at startup.
 
 Required checks:
 - [global] and [mqtt] sections exist

@@ -1,19 +1,19 @@
-# PIo MQTT API Reference
+# Pio MQTT API Reference
 
 Version: 0.2.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-PIo (Paradox IO) uses MQTT for all bridge communication.
+Pio (Paradox IO) uses MQTT for all bridge communication.
 
 Communication model:
-- Commands: control systems to PIo
-- State: PIo to control systems
-- Events: PIo operational and command outcome events
-- Warnings: PIo warnings and errors
-- Announce: PIo one-time online announcement
-- Heartbeat: PIo periodic health status
+- Commands: control systems to Pio
+- State: Pio to control systems
+- Events: Pio operational and command outcome events
+- Warnings: Pio warnings and errors
+- Announce: Pio one-time online announcement
+- Heartbeat: Pio periodic health status
 
 Design rules:
 - IO data topics use simple string payloads whenever possible.
@@ -140,7 +140,7 @@ Warning/error message fields:
 
 ### Announce Message Format
 
-Published once to announce_topic when PIo comes online.
+Published once to announce_topic when Pio comes online.
 
 {
   "timestamp": "2026-04-16T18:30:00.000Z",
@@ -217,7 +217,7 @@ Reload active INI file.
   "command": "reload_config"
 }
 
-If reload fails, PIo publishes warning and continues with current active config.
+If reload fails, Pio publishes warning and continues with current active config.
 
 ### ping
 
@@ -230,7 +230,7 @@ Health check.
 
 ### Command Processing Behavior
 
-For each command received on commands_topic, PIo publishes command outcome events to events_topic:
+For each command received on commands_topic, Pio publishes command outcome events to events_topic:
 1. command_received
 2. command_success, command_failed, or command_warning
 
@@ -291,7 +291,7 @@ Non-canonical examples:
 
 ## Error Handling
 
-PIo publishes warning and error JSON to warnings_topic.
+Pio publishes warning and error JSON to warnings_topic.
 
 Common warning/error codes:
 - invalid_message_format
@@ -320,7 +320,7 @@ Suggested defaults:
 | Heartbeat | 0 | Presence-based and periodic |
 | IO data | 0 or 1 | Depends on endpoint criticality |
 
-PIo default remains qos = 1 unless overridden in INI.
+Pio default remains qos = 1 unless overridden in INI.
 
 ## Examples
 
@@ -342,7 +342,7 @@ mosquitto_sub -h localhost -t "paradox/spycatcher/#" -v
 
 ## Compatibility Notes
 
-This PIo contract follows the established Paradox topic pattern:
+This Pio contract follows the established Paradox topic pattern:
 - commands
 - state
 - events

@@ -1,6 +1,6 @@
-# PIo
+# Pio
 
-PIo (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
+Pio (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
 
 ## What It Does
 
