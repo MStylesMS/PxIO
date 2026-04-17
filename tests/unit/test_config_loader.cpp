@@ -12,7 +12,8 @@
 namespace fs = std::filesystem;
 
 // Writes a temp INI file and returns its path.
-static std::string writeTempIni(const std::string& contents) {
+static std::string writeTempIni(const std::string &contents)
+{
     auto path = fs::temp_directory_path() / "pio_test_config.ini";
     std::ofstream f(path);
     f << contents;
@@ -21,7 +22,7 @@ static std::string writeTempIni(const std::string& contents) {
 
 // ─── Minimal valid config ────────────────────────────────────────────────────
 
-static const char* kMinimalIni = R"(
+static const char *kMinimalIni = R"(
 [global]
 instance_name = test_pio
 
@@ -37,7 +38,8 @@ announce_topic = pio/test/announce
 heartbeat_topic = pio/test/heartbeat
 )";
 
-TEST(ConfigLoader, LoadsMinimalConfig) {
+TEST(ConfigLoader, LoadsMinimalConfig)
+{
     auto path = writeTempIni(kMinimalIni);
     AppConfig cfg;
     ASSERT_TRUE(ConfigLoader::load(path, cfg));
@@ -50,7 +52,7 @@ TEST(ConfigLoader, LoadsMinimalConfig) {
 
 // ─── Unknown keys warn but do not fail ───────────────────────────────────────
 
-static const char* kUnknownKeyIni = R"(
+static const char *kUnknownKeyIni = R"(
 [global]
 instance_name = pio
 furble_wumble = this_key_does_not_exist
@@ -67,7 +69,8 @@ announce_topic = pio/announce
 heartbeat_topic = pio/heartbeat
 )";
 
-TEST(ConfigLoader, UnknownKeyDoesNotFailLoad) {
+TEST(ConfigLoader, UnknownKeyDoesNotFailLoad)
+{
     auto path = writeTempIni(kUnknownKeyIni);
     AppConfig cfg;
     // Should still succeed despite unknown key 'furble_wumble'
@@ -76,7 +79,7 @@ TEST(ConfigLoader, UnknownKeyDoesNotFailLoad) {
 
 // ─── Missing required mqtt.host fails validation ─────────────────────────────
 
-static const char* kMissingHostIni = R"(
+static const char *kMissingHostIni = R"(
 [global]
 instance_name = pio
 
@@ -91,7 +94,8 @@ announce_topic = pio/announce
 heartbeat_topic = pio/heartbeat
 )";
 
-TEST(ConfigLoader, MissingMqttHostFails) {
+TEST(ConfigLoader, MissingMqttHostFails)
+{
     auto path = writeTempIni(kMissingHostIni);
     AppConfig cfg;
     EXPECT_FALSE(ConfigLoader::load(path, cfg));
@@ -99,7 +103,7 @@ TEST(ConfigLoader, MissingMqttHostFails) {
 
 // ─── Missing required mqtt.client_id fails ───────────────────────────────────
 
-static const char* kMissingClientIdIni = R"(
+static const char *kMissingClientIdIni = R"(
 [global]
 instance_name = pio
 
@@ -114,7 +118,8 @@ announce_topic = pio/announce
 heartbeat_topic = pio/heartbeat
 )";
 
-TEST(ConfigLoader, MissingClientIdFails) {
+TEST(ConfigLoader, MissingClientIdFails)
+{
     auto path = writeTempIni(kMissingClientIdIni);
     AppConfig cfg;
     EXPECT_FALSE(ConfigLoader::load(path, cfg));
@@ -122,7 +127,7 @@ TEST(ConfigLoader, MissingClientIdFails) {
 
 // ─── GPIO endpoint parsed correctly ──────────────────────────────────────────
 
-static const char* kWithGpioIni = R"(
+static const char *kWithGpioIni = R"(
 [global]
 instance_name = pio
 
@@ -152,37 +157,42 @@ io_topic = gpio/button
 debounce_cycles = 4
 )";
 
-TEST(ConfigLoader, GpioEndpointParsed) {
+TEST(ConfigLoader, GpioEndpointParsed)
+{
     auto path = writeTempIni(kWithGpioIni);
     AppConfig cfg;
     ASSERT_TRUE(ConfigLoader::load(path, cfg));
     ASSERT_EQ(cfg.gpio_endpoints.size(), 2u);
 
     // Find by name (unordered_map iteration order is not guaranteed)
-    const GpioEndpointConfig* out_ep = nullptr;
-    const GpioEndpointConfig* in_ep  = nullptr;
-    for (const auto& ep : cfg.gpio_endpoints) {
-        if (ep.name == "led_red") out_ep = &ep;
-        if (ep.name == "button")   in_ep  = &ep;
+    const GpioEndpointConfig *out_ep = nullptr;
+    const GpioEndpointConfig *in_ep = nullptr;
+    for (const auto &ep : cfg.gpio_endpoints)
+    {
+        if (ep.name == "led_red")
+            out_ep = &ep;
+        if (ep.name == "button")
+            in_ep = &ep;
     }
     ASSERT_NE(out_ep, nullptr) << "gpio:led_red not found";
-    ASSERT_NE(in_ep,  nullptr) << "gpio:button not found";
+    ASSERT_NE(in_ep, nullptr) << "gpio:button not found";
 
-    EXPECT_EQ(out_ep->type,         "digital_out");
-    EXPECT_EQ(out_ep->pin,          "17");
-    EXPECT_EQ(out_ep->io_topic,     "gpio/led_red");
-    EXPECT_EQ(out_ep->default_value,"0");
+    EXPECT_EQ(out_ep->type, "digital_out");
+    EXPECT_EQ(out_ep->pin, "17");
+    EXPECT_EQ(out_ep->io_topic, "gpio/led_red");
+    EXPECT_EQ(out_ep->default_value, "0");
     EXPECT_TRUE(out_ep->retain);
     EXPECT_TRUE(out_ep->retain_explicit);
 
-    EXPECT_EQ(in_ep->name,    "button");
-    EXPECT_EQ(in_ep->type,    "digital_in");
+    EXPECT_EQ(in_ep->name, "button");
+    EXPECT_EQ(in_ep->type, "digital_in");
     EXPECT_EQ(in_ep->debounce_cycles, 4);
 }
 
 // ─── Default numeric values ───────────────────────────────────────────────────
 
-TEST(ConfigLoader, DefaultValues) {
+TEST(ConfigLoader, DefaultValues)
+{
     auto path = writeTempIni(kMinimalIni);
     AppConfig cfg;
     ASSERT_TRUE(ConfigLoader::load(path, cfg));
@@ -196,7 +206,8 @@ TEST(ConfigLoader, DefaultValues) {
 
 // ─── Nonexistent file fails ──────────────────────────────────────────────────
 
-TEST(ConfigLoader, NonexistentFileFails) {
+TEST(ConfigLoader, NonexistentFileFails)
+{
     AppConfig cfg;
     EXPECT_FALSE(ConfigLoader::load("/tmp/pio_does_not_exist_xyz.ini", cfg));
 }

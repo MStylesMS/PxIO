@@ -1,0 +1,154 @@
+{
+    "GPIOS": [
+        {
+            "PIN": 22,
+            "TYPE": "O",
+            "MQTT_TOPIC": "clock",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 24,
+            "TYPE": "I",
+            "MQTT_TOPIC": "safe"
+        },
+        {
+            "PIN": 32,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F1"
+        },
+        {
+            "PIN": 33,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F2"
+        },
+        {
+            "PIN": 34,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F3"
+        },
+        {
+            "PIN": 35,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F4"
+        },
+        {
+            "PIN": 36,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F5"
+        },
+        {
+            "PIN": 37,
+            "TYPE": "I",
+            "MQTT_TOPIC": "F6"
+        },
+        {
+            "PIN": 40,
+            "TYPE": "O",
+            "MQTT_TOPIC": "transLight",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 41,
+            "TYPE": "O",
+            "MQTT_TOPIC": "magLock",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 42,
+            "TYPE": "O",
+            "MQTT_TOPIC": "fogOnOff",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 43,
+            "TYPE": "O",
+            "MQTT_TOPIC": "fogTrigger",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 45,
+            "TYPE": "O",
+            "MQTT_TOPIC": "keyDrop",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 46,
+            "TYPE": "O",
+            "MQTT_TOPIC": "armedDisarmed",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 47,
+            "TYPE": "O",
+            "MQTT_TOPIC": "onOff",
+            "DEFAULT": 0
+        },
+        {
+            "PIN": 48,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M1"
+        },
+        {
+            "PIN": 49,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M2"
+        },
+        {
+            "PIN": 50,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M3"
+        },
+        {
+            "PIN": 51,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M4"
+        },
+        {
+            "PIN": 52,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M5"
+        },
+        {
+            "PIN": 53,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M6"
+        },
+        {
+            "PIN": 54,
+            "TYPE": "I",
+            "MQTT_TOPIC": "M7"
+        }
+    ],
+    "BUSES": [
+        {
+            "ADDRESS": 32,
+            "NUM_PINS": 16
+        },
+        {
+            "ADDRESS": 33,
+            "NUM_PINS": 16
+        }
+    ],
+    "MATRICIES": [
+        {
+            "NAME": "Keypad",
+            "TYPE": "adafruit3x4",
+            "ROWS": [63, 62, 61, 60],
+            "COLS": [57, 58, 59],
+            "KEYS": [
+                ["1", "2", "3"],
+                ["4", "5", "6"],
+                ["7", "8", "9"],
+                ["asterik", "0", "pound"]
+            ],
+            "DEBOUNCE_CYCLES": 5
+        }
+    ],
+    "EXPANDER_IN_USE": true,
+    "EXPANDER_THRESHOLD": 32,
+    "MQTT_ROOT": "/Paradox/Moscow/GPIO",
+    "POLL_TIME": 10,
+    "MQTT_ANNOUNCE": "misc",
+    "DEBOUNCE_CYCLES": 5,
+    "MQTT_SERVER": "mqtt://127.0.0.1"
+}

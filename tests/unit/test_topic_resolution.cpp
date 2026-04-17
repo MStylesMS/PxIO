@@ -9,7 +9,8 @@
 
 // Rule: if io_topic starts with '/', strip the leading slash and use it
 // verbatim (absolute); otherwise prepend base_topic + '/'.
-static std::string resolveTopic(const std::string& base, const std::string& io) {
+static std::string resolveTopic(const std::string &base, const std::string &io)
+{
     if (!io.empty() && io.front() == '/')
         return io.substr(1);
     return base + "/" + io;
@@ -17,39 +18,46 @@ static std::string resolveTopic(const std::string& base, const std::string& io) 
 
 // ─── Relative topics ─────────────────────────────────────────────────────────
 
-TEST(TopicResolution, RelativeTopicPrependsBase) {
-    EXPECT_EQ(resolveTopic("pio/home", "gpio/led"),  "pio/home/gpio/led");
+TEST(TopicResolution, RelativeTopicPrependsBase)
+{
+    EXPECT_EQ(resolveTopic("pio/home", "gpio/led"), "pio/home/gpio/led");
 }
 
-TEST(TopicResolution, RelativeTopicWithDeepBase) {
+TEST(TopicResolution, RelativeTopicWithDeepBase)
+{
     EXPECT_EQ(resolveTopic("site/room/pio", "gpio/button"),
               "site/room/pio/gpio/button");
 }
 
-TEST(TopicResolution, RelativeTopicEmptyIo) {
+TEST(TopicResolution, RelativeTopicEmptyIo)
+{
     EXPECT_EQ(resolveTopic("pio/home", ""), "pio/home/");
 }
 
 // ─── Absolute topics (leading '/') ───────────────────────────────────────────
 
-TEST(TopicResolution, AbsoluteTopicStripLeadingSlash) {
+TEST(TopicResolution, AbsoluteTopicStripLeadingSlash)
+{
     EXPECT_EQ(resolveTopic("pio/home", "/sensors/temperature"),
               "sensors/temperature");
 }
 
-TEST(TopicResolution, AbsoluteTopicIgnoresBase) {
+TEST(TopicResolution, AbsoluteTopicIgnoresBase)
+{
     EXPECT_EQ(resolveTopic("pio/home", "/completely/different/path"),
               "completely/different/path");
 }
 
-TEST(TopicResolution, AbsoluteTopicOnlySlashBecomeEmpty) {
+TEST(TopicResolution, AbsoluteTopicOnlySlashBecomeEmpty)
+{
     // Edge case: io_topic = "/" → strips slash → empty string
     EXPECT_EQ(resolveTopic("pio/home", "/"), "");
 }
 
 // ─── Base topic with trailing slash ──────────────────────────────────────────
 
-TEST(TopicResolution, BaseWithTrailingSlashNoDoubleSlash) {
+TEST(TopicResolution, BaseWithTrailingSlashNoDoubleSlash)
+{
     // The caller is expected to not include a trailing slash on base_topic.
     // Verify the raw concat behaviour is predictable.
     EXPECT_EQ(resolveTopic("pio/home/", "gpio/led"), "pio/home//gpio/led");

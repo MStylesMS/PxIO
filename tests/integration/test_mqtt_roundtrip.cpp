@@ -19,38 +19,43 @@ using json = nlohmann::json;
 
 // ─── Setup helpers ───────────────────────────────────────────────────────────
 
-static MqttConfig makeTestMqttConfig() {
+static MqttConfig makeTestMqttConfig()
+{
     MqttConfig c;
-    c.host            = "localhost";
-    c.client_id       = "pio_integration";
-    c.base_topic      = "pio/integration";
-    c.commands_topic  = "pio/integration/commands";
-    c.state_topic     = "pio/integration/state";
-    c.events_topic    = "pio/integration/events";
-    c.warnings_topic  = "pio/integration/warnings";
-    c.announce_topic  = "pio/integration/announce";
+    c.host = "localhost";
+    c.client_id = "pio_integration";
+    c.base_topic = "pio/integration";
+    c.commands_topic = "pio/integration/commands";
+    c.state_topic = "pio/integration/state";
+    c.events_topic = "pio/integration/events";
+    c.warnings_topic = "pio/integration/warnings";
+    c.announce_topic = "pio/integration/announce";
     c.heartbeat_topic = "pio/integration/heartbeat";
     return c;
 }
 
-static std::string makeCmdJson(const std::string& cmd,
-                                const std::string& target = "",
-                                const std::string& value  = "",
-                                const std::string& req_id = "r1") {
+static std::string makeCmdJson(const std::string &cmd,
+                               const std::string &target = "",
+                               const std::string &value = "",
+                               const std::string &req_id = "r1")
+{
     json j;
-    j["command"]    = cmd;
+    j["command"] = cmd;
     j["request_id"] = req_id;
-    if (!target.empty()) j["target"] = target;
-    if (!value.empty())  j["value"]  = value;
+    if (!target.empty())
+        j["target"] = target;
+    if (!value.empty())
+        j["value"] = value;
     return j.dump();
 }
 
 // ─── Full write roundtrip ─────────────────────────────────────────────────────
 
-TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess) {
+TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess)
+{
     auto transport = std::make_shared<MockTransport>();
-    auto registry  = std::make_shared<EndpointRegistry>();
-    auto gpio      = std::make_shared<MockGpioProvider>();
+    auto registry = std::make_shared<EndpointRegistry>();
+    auto gpio = std::make_shared<MockGpioProvider>();
     GlobalConfig global_cfg;
     auto mqtt_cfg = makeTestMqttConfig();
 
@@ -63,10 +68,10 @@ TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess) {
 
     // Set up a digital_out endpoint
     GpioEndpointConfig ocfg;
-    ocfg.name          = "relay";
-    ocfg.type          = "digital_out";
-    ocfg.pin           = "18";
-    ocfg.io_topic      = "gpio/relay";
+    ocfg.name = "relay";
+    ocfg.type = "digital_out";
+    ocfg.pin = "18";
+    ocfg.io_topic = "gpio/relay";
     ocfg.default_value = "0";
 
     auto ep = std::make_shared<DigitalOut>(ocfg, gpio, false);
@@ -77,9 +82,10 @@ TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess) {
 
     // Subscribe commands (simulate transport subscription)
     transport->subscribe(mqtt_cfg.commands_topic, 1,
-        [&dispatcher, &mqtt_cfg](const std::string& t, const std::string& p) {
-            dispatcher->onCommandMessage(t, p);
-        });
+                         [&dispatcher, &mqtt_cfg](const std::string &t, const std::string &p)
+                         {
+                             dispatcher->onCommandMessage(t, p);
+                         });
 
     transport->clearPublished();
 
@@ -92,10 +98,13 @@ TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess) {
 
     // command_success event should have been published
     bool success_found = false;
-    for (auto& pub : transport->published()) {
-        if (pub.topic == mqtt_cfg.events_topic) {
+    for (auto &pub : transport->published())
+    {
+        if (pub.topic == mqtt_cfg.events_topic)
+        {
             auto ej = json::parse(pub.payload);
-            if (ej.value("event", "") == std::string(EventNames::COMMAND_SUCCESS)) {
+            if (ej.value("event", "") == std::string(EventNames::COMMAND_SUCCESS))
+            {
                 success_found = true;
                 break;
             }
@@ -106,10 +115,11 @@ TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess) {
 
 // ─── Read command publishes current value to IO topic ────────────────────────
 
-TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic) {
+TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic)
+{
     auto transport = std::make_shared<MockTransport>();
-    auto registry  = std::make_shared<EndpointRegistry>();
-    auto gpio      = std::make_shared<MockGpioProvider>();
+    auto registry = std::make_shared<EndpointRegistry>();
+    auto gpio = std::make_shared<MockGpioProvider>();
     GlobalConfig global_cfg;
     auto mqtt_cfg = makeTestMqttConfig();
 
@@ -122,9 +132,9 @@ TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic) {
         registry, transport, mqtt_cfg, telemetry);
 
     GpioEndpointConfig icfg;
-    icfg.name     = "sensor";
-    icfg.type     = "digital_in";
-    icfg.pin      = "22";
+    icfg.name = "sensor";
+    icfg.type = "digital_in";
+    icfg.pin = "22";
     icfg.io_topic = "gpio/sensor";
     icfg.debounce_cycles = 1;
 
@@ -135,9 +145,10 @@ TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic) {
     registry->add("gpio:sensor", ep);
 
     transport->subscribe(mqtt_cfg.commands_topic, 1,
-        [&dispatcher, &mqtt_cfg](const std::string& t, const std::string& p) {
-            dispatcher->onCommandMessage(t, p);
-        });
+                         [&dispatcher, &mqtt_cfg](const std::string &t, const std::string &p)
+                         {
+                             dispatcher->onCommandMessage(t, p);
+                         });
 
     transport->clearPublished();
     transport->inject(mqtt_cfg.commands_topic,
@@ -152,9 +163,10 @@ TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic) {
 
 // ─── republish_state publishes to state_topic ────────────────────────────────
 
-TEST(MqttRoundtrip, RepublishStatePublishesToStateTopic) {
+TEST(MqttRoundtrip, RepublishStatePublishesToStateTopic)
+{
     auto transport = std::make_shared<MockTransport>();
-    auto registry  = std::make_shared<EndpointRegistry>();
+    auto registry = std::make_shared<EndpointRegistry>();
     GlobalConfig global_cfg;
     auto mqtt_cfg = makeTestMqttConfig();
 
@@ -164,9 +176,10 @@ TEST(MqttRoundtrip, RepublishStatePublishesToStateTopic) {
         registry, transport, mqtt_cfg, telemetry);
 
     transport->subscribe(mqtt_cfg.commands_topic, 1,
-        [&dispatcher, &mqtt_cfg](const std::string& t, const std::string& p) {
-            dispatcher->onCommandMessage(t, p);
-        });
+                         [&dispatcher, &mqtt_cfg](const std::string &t, const std::string &p)
+                         {
+                             dispatcher->onCommandMessage(t, p);
+                         });
 
     transport->clearPublished();
     transport->inject(mqtt_cfg.commands_topic,

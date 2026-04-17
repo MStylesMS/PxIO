@@ -31,7 +31,8 @@ static void onSignal(int) { g_running = 0; }
 
 // ─── topic resolution ─────────────────────────────────────────────────────────
 
-static std::string resolveTopic(const std::string& base, const std::string& io) {
+static std::string resolveTopic(const std::string &base, const std::string &io)
+{
     if (!io.empty() && io.front() == '/')
         return io.substr(1);
     return base + "/" + io;
@@ -42,7 +43,8 @@ static std::string resolveTopic(const std::string& base, const std::string& io) 
 // Resolve pin string to numeric index.
 // Supports "17" (native) and "bus_name:offset" (expander — returns offset, bus
 // resolution is handled by the GpioProvider map in the provider context).
-static unsigned int resolvePin(const std::string& pin_str) {
+static unsigned int resolvePin(const std::string &pin_str)
+{
     auto colon = pin_str.find(':');
     if (colon != std::string::npos)
         return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
@@ -52,28 +54,35 @@ static unsigned int resolvePin(const std::string& pin_str) {
 // Build the GpioProvider map: bus name → provider.  Native GPIO uses the
 // shared default provider.  MCP23017 expanders get their own Mcp23017 instance.
 static std::unordered_map<std::string, std::shared_ptr<GpioProvider>>
-buildProviderMap(const AppConfig& cfg,
-                 std::shared_ptr<GpioProvider> native_gpio) {
+buildProviderMap(const AppConfig &cfg,
+                 std::shared_ptr<GpioProvider> native_gpio)
+{
     std::unordered_map<std::string, std::shared_ptr<GpioProvider>> map;
     map[""] = native_gpio; // "" = native GPIO
 
-    for (const auto& bus : cfg.buses) {
-        if (bus.type == "mcp23017") {
+    for (const auto &bus : cfg.buses)
+    {
+        if (bus.type == "mcp23017")
+        {
             // Find parent i2c bus device path
             std::string device;
-            for (const auto& b : cfg.buses) {
-                if ("bus:" + b.name == bus.parent || b.name == bus.parent) {
+            for (const auto &b : cfg.buses)
+            {
+                if ("bus:" + b.name == bus.parent || b.name == bus.parent)
+                {
                     device = b.device;
                     break;
                 }
             }
-            if (device.empty()) {
+            if (device.empty())
+            {
                 LOG_WARN("main: cannot find parent bus for " + bus.name + " — skipped");
                 continue;
             }
             auto expander = std::make_shared<Mcp23017>(device,
-                                static_cast<uint8_t>(bus.address));
-            if (!expander->openChip("")) {
+                                                       static_cast<uint8_t>(bus.address));
+            if (!expander->openChip(""))
+            {
                 LOG_WARN("main: MCP23017 " + bus.name + " failed to open — skipped");
                 continue;
             }
@@ -86,13 +95,16 @@ buildProviderMap(const AppConfig& cfg,
 
 // Select provider for a pin spec; returns nullptr on failure.
 static std::shared_ptr<GpioProvider> providerForPin(
-    const std::string& pin_str,
-    const std::unordered_map<std::string, std::shared_ptr<GpioProvider>>& providers) {
+    const std::string &pin_str,
+    const std::unordered_map<std::string, std::shared_ptr<GpioProvider>> &providers)
+{
     auto colon = pin_str.find(':');
-    if (colon == std::string::npos) return providers.at("");
+    if (colon == std::string::npos)
+        return providers.at("");
     std::string bus_name = pin_str.substr(0, colon);
     auto it = providers.find(bus_name);
-    if (it == providers.end()) {
+    if (it == providers.end())
+    {
         LOG_WARN("main: no provider found for bus '" + bus_name + "'");
         return nullptr;
     }
@@ -101,91 +113,105 @@ static std::shared_ptr<GpioProvider> providerForPin(
 
 // Populate the EndpointRegistry from config. Skips endpoints that fail init.
 static void buildRegistry(
-    const AppConfig& cfg,
-    const std::unordered_map<std::string, std::shared_ptr<GpioProvider>>& providers,
-    EndpointRegistry& registry) {
+    const AppConfig &cfg,
+    const std::unordered_map<std::string, std::shared_ptr<GpioProvider>> &providers,
+    EndpointRegistry &registry)
+{
 
     // GPIO endpoints
-    for (const auto& gcfg : cfg.gpio_endpoints) {
+    for (const auto &gcfg : cfg.gpio_endpoints)
+    {
         auto provider = providerForPin(gcfg.pin, providers);
-        if (!provider) {
-            LOG_WARN("main: skipping gpio:" + gcfg.name + " — no provider for pin "
-                     + gcfg.pin);
+        if (!provider)
+        {
+            LOG_WARN("main: skipping gpio:" + gcfg.name + " — no provider for pin " + gcfg.pin);
             continue;
         }
 
         std::shared_ptr<Endpoint> ep;
-        if (gcfg.type == "digital_in") {
+        if (gcfg.type == "digital_in")
+        {
             ep = std::make_shared<DigitalIn>(gcfg, provider,
-                                              cfg.mqtt.global_retain);
-        } else if (gcfg.type == "digital_out") {
+                                             cfg.mqtt.global_retain);
+        }
+        else if (gcfg.type == "digital_out")
+        {
             ep = std::make_shared<DigitalOut>(gcfg, provider,
-                                               cfg.mqtt.global_retain);
-        } else {
-            LOG_WARN("main: unsupported gpio type '" + gcfg.type + "' on gpio:"
-                     + gcfg.name + " — skipped");
+                                              cfg.mqtt.global_retain);
+        }
+        else
+        {
+            LOG_WARN("main: unsupported gpio type '" + gcfg.type + "' on gpio:" + gcfg.name + " — skipped");
             continue;
         }
 
-        if (!ep->init()) {
-            LOG_WARN("main: endpoint gpio:" + gcfg.name
-                     + " failed init — skipped (endpoint_unavailable)");
+        if (!ep->init())
+        {
+            LOG_WARN("main: endpoint gpio:" + gcfg.name + " failed init — skipped (endpoint_unavailable)");
             continue;
         }
 
         ep->setResolvedTopic(resolveTopic(cfg.mqtt.base_topic, gcfg.io_topic));
 
         registry.add("gpio:" + gcfg.name, ep);
-        LOG_INFO("main: registered gpio:" + gcfg.name
-                 + " → " + ep->resolvedTopic());
+        LOG_INFO("main: registered gpio:" + gcfg.name + " → " + ep->resolvedTopic());
     }
 
     // Compound endpoints
-    for (const auto& ccfg : cfg.compound_endpoints) {
+    for (const auto &ccfg : cfg.compound_endpoints)
+    {
         std::shared_ptr<Endpoint> ep;
 
-        if (ccfg.type == "keypad_matrix") {
+        if (ccfg.type == "keypad_matrix")
+        {
             // For keypad_matrix, use the native GPIO provider (pins are integers)
             auto provider = providers.count("") ? providers.at("") : nullptr;
-            if (!provider) continue;
+            if (!provider)
+                continue;
             ep = std::make_shared<KeypadMatrix>(ccfg, provider,
-                                                 cfg.mqtt.global_retain);
-        } else if (ccfg.type == "patch_map") {
+                                                cfg.mqtt.global_retain);
+        }
+        else if (ccfg.type == "patch_map")
+        {
             auto provider = providers.count("") ? providers.at("") : nullptr;
-            if (!provider) continue;
+            if (!provider)
+                continue;
             ep = std::make_shared<PatchMap>(ccfg, provider,
-                                             cfg.mqtt.global_retain);
-        } else {
-            LOG_WARN("main: unsupported compound type '" + ccfg.type
-                     + "' on compound:" + ccfg.name + " — skipped");
+                                            cfg.mqtt.global_retain);
+        }
+        else
+        {
+            LOG_WARN("main: unsupported compound type '" + ccfg.type + "' on compound:" + ccfg.name + " — skipped");
             continue;
         }
 
-        if (!ep->init()) {
-            LOG_WARN("main: endpoint compound:" + ccfg.name
-                     + " failed init — skipped");
+        if (!ep->init())
+        {
+            LOG_WARN("main: endpoint compound:" + ccfg.name + " failed init — skipped");
             continue;
         }
 
         ep->setResolvedTopic(resolveTopic(cfg.mqtt.base_topic, ccfg.io_topic));
 
         registry.add("compound:" + ccfg.name, ep);
-        LOG_INFO("main: registered compound:" + ccfg.name
-                 + " → " + ep->resolvedTopic());
+        LOG_INFO("main: registered compound:" + ccfg.name + " → " + ep->resolvedTopic());
     }
 }
 
 // ─── CLI parsing ──────────────────────────────────────────────────────────────
 
-struct CliArgs {
+struct CliArgs
+{
     std::string config_path = "pio.ini";
-    std::string log_file;    // empty = not set via CLI
-    bool        use_mock_gpio = false;
+    std::string log_file; // empty = not set via CLI
+    bool use_mock_gpio = false;
 };
 
-static CliArgs parseCli(int argc, char* argv[]) {
+static CliArgs parseCli(int argc, char *argv[])
+{
     CliArgs args;
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i)
+    {
         std::string a = argv[i];
         if ((a == "--config" || a == "-c") && i + 1 < argc)
             args.config_path = argv[++i];
@@ -199,8 +225,9 @@ static CliArgs parseCli(int argc, char* argv[]) {
 
 // ─── main ─────────────────────────────────────────────────────────────────────
 
-int main(int argc, char* argv[]) {
-    std::signal(SIGINT,  onSignal);
+int main(int argc, char *argv[])
+{
+    std::signal(SIGINT, onSignal);
     std::signal(SIGTERM, onSignal);
 
     CliArgs cli = parseCli(argc, argv);
@@ -210,7 +237,8 @@ int main(int argc, char* argv[]) {
 
     // Load config
     AppConfig cfg;
-    if (!ConfigLoader::load(cli.config_path, cfg)) {
+    if (!ConfigLoader::load(cli.config_path, cfg))
+    {
         LOG_ERROR("Fatal: config load failed, exiting");
         return 1;
     }
@@ -232,14 +260,18 @@ int main(int argc, char* argv[]) {
     mock_prov->openChip("/dev/gpiochip0");
     native_gpio = mock_prov;
 #else
-    if (cli.use_mock_gpio) {
+    if (cli.use_mock_gpio)
+    {
         auto mock_prov = std::make_shared<MockGpioProvider>();
         mock_prov->openChip("/dev/gpiochip0");
         native_gpio = mock_prov;
         LOG_INFO("main: using MockGpioProvider (--mock-gpio)");
-    } else {
+    }
+    else
+    {
         auto real_prov = std::make_shared<LibgpiodProvider>();
-        if (!real_prov->openChip("/dev/gpiochip0")) {
+        if (!real_prov->openChip("/dev/gpiochip0"))
+        {
             LOG_ERROR("Fatal: cannot open /dev/gpiochip0");
             return 1;
         }
@@ -252,7 +284,8 @@ int main(int argc, char* argv[]) {
 
     // MQTT transport
     auto transport = std::make_shared<PahoTransport>(cfg.mqtt);
-    if (!transport->connect()) {
+    if (!transport->connect())
+    {
         LOG_ERROR("Fatal: cannot connect to MQTT broker " + cfg.mqtt.host);
         return 1;
     }
@@ -272,7 +305,8 @@ int main(int argc, char* argv[]) {
         registry, transport, cfg.mqtt, telemetry);
 
     // reload_config callback — rebuild endpoints in place
-    dispatcher->setReloadCallback([&]() -> bool {
+    dispatcher->setReloadCallback([&]() -> bool
+                                  {
         AppConfig new_cfg;
         if (!ConfigLoader::load(cfg.config_file_path, new_cfg)) return false;
         // Shutdown existing endpoints
@@ -282,27 +316,30 @@ int main(int argc, char* argv[]) {
         buildRegistry(cfg, provider_map, *registry);
         LOG_INFO("main: config reloaded; " + std::to_string(registry->size())
                  + " endpoint(s) active");
-        return true;
-    });
+        return true; });
 
     // Subscribe to commands
     transport->subscribe(cfg.mqtt.commands_topic, cfg.mqtt.qos,
-        [&dispatcher](const std::string& topic, const std::string& payload) {
-            dispatcher->onCommandMessage(topic, payload);
-        });
+                         [&dispatcher](const std::string &topic, const std::string &payload)
+                         {
+                             dispatcher->onCommandMessage(topic, payload);
+                         });
 
     // Announce and initial state
     telemetry->publishAnnounce();
     telemetry->publishState();
 
     // ── main loop ─────────────────────────────────────────────────────────────
-    LOG_INFO("main: bridge running (poll_interval=" 
-             + std::to_string(cfg.global.poll_interval_ms) + "ms)");
+    LOG_INFO("main: bridge running (poll_interval=" + std::to_string(cfg.global.poll_interval_ms) + "ms)");
 
-    while (g_running) {
-        for (auto& ep : registry->all()) {
-            if (!ep->isAvailable()) continue;
-            if (ep->pollAndCheckChanged()) {
+    while (g_running)
+    {
+        for (auto &ep : registry->all())
+        {
+            if (!ep->isAvailable())
+                continue;
+            if (ep->pollAndCheckChanged())
+            {
                 std::string val = ep->lastValue();
                 transport->publish(ep->resolvedTopic(), val,
                                    cfg.mqtt.qos, ep->retainEnabled());
@@ -319,7 +356,8 @@ int main(int argc, char* argv[]) {
     // ── shutdown ──────────────────────────────────────────────────────────────
     LOG_INFO("main: shutting down");
 
-    for (auto& ep : registry->all()) ep->shutdown();
+    for (auto &ep : registry->all())
+        ep->shutdown();
     registry->clear();
 
     transport->disconnect();

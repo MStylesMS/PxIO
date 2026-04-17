@@ -8,12 +8,13 @@
 // solely to establish the API boundary. Implementations (LinuxAnalogProvider,
 // MockAnalogProvider) are added in phase 2.
 
-class AnalogProvider {
+class AnalogProvider
+{
 public:
     virtual ~AnalogProvider() = default;
 
     // ADC — read a normalised value in [0.0, 1.0] from channel.
-    virtual bool readScaled(int channel, double& value_out) = 0;
+    virtual bool readScaled(int channel, double &value_out) = 0;
 
     // DAC — write a normalised value in [0.0, 1.0] to channel.
     virtual bool writeScaled(int channel, double value) = 0;

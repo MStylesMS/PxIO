@@ -1,0 +1,82 @@
+{
+  "ROWS": [ 22,23,24,25 ],
+  "COLUMNS": [ 6,10,11 ],
+  "BUTTONS": [
+    {
+      "COLUMN": 6,
+      "ROW": 22,
+      "TOPIC": "pound"
+    },
+    {
+      "COLUMN": 6,
+      "ROW": 23,
+      "TOPIC": "9"
+    },
+    {
+      "COLUMN": 6,
+      "ROW": 24,
+      "TOPIC": "6"
+    },
+    {
+      "COLUMN": 6,
+      "ROW": 25,
+      "TOPIC": "3"
+    },
+    {
+      "COLUMN": 10,
+      "ROW": 22,
+      "TOPIC": "0"
+    },
+    {
+      "COLUMN": 10,
+      "ROW": 23,
+      "TOPIC": "8"
+    },
+    {
+      "COLUMN": 10,
+      "ROW": 24,
+      "TOPIC": "5"
+    },
+    {
+      "COLUMN": 10,
+      "ROW": 25,
+      "TOPIC": "2"
+    },
+    {
+      "COLUMN": 11,
+      "ROW": 22,
+      "TOPIC": "asterik"
+    },
+    {
+      "COLUMN": 11,
+      "ROW": 23,
+      "TOPIC": "7"
+    },
+    {
+      "COLUMN": 11,
+      "ROW": 24,
+      "TOPIC": "4"
+    },
+    {
+      "COLUMN": 11,
+      "ROW": 25,
+      "TOPIC": "1"
+    }
+  ],
+  "BUSES": [
+    {
+      "ADDRESS": "0x20",
+      "NUM_PINS": 16
+    }
+  ],
+  "EXPANDER_IN_USE": false,
+  "EXPANDER_THRESHOLD":  5,
+  "MQTT_ROOT": "/Paradox/Moscow/Keypad",
+  "POLL_TIME": 10,
+  "MQTT_ANNOUNCE": "misc",
+  "DEBOUNCE_CYCLES": 5,
+  "MQTT_SERVER": "mqtt://127.0.0.1"
+  
+
+
+}

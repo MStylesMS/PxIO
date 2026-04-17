@@ -1,0 +1,169 @@
+{ "GPIOs": [
+  {
+    "PIN": 4,
+    "TYPE": "O",
+    "MQTT_TOPIC": "fan",
+    "DEFAULT": 0
+  },
+  {
+    "PIN":5,
+    "TYPE": "I",
+    "MQTT_TOPIC": "pir"
+  },
+  {
+    "PIN": 26,
+    "TYPE": "O",
+    "MQTT_TOPIC":"maglock",
+    "DEFAULT": 0
+  },
+  {
+    "PIN": 23,
+    "TYPE": "O",
+    "MQTT_TOPIC":"blue",
+    "DEFAULT": 0
+  },
+  {
+    "PIN": 24,
+    "TYPE": "O",
+    "MQTT_TOPIC":"green",
+    "DEFAULT": 0
+  },
+  {
+    "PIN": 27,
+    "TYPE": "O",
+    "MQTT_TOPIC":"red",
+    "DEFAULT": 0
+  },
+  {
+    "PIN": 25,
+    "TYPE": "I",
+    "MQTT_TOPIC":"door"
+  },
+  {
+    "PIN": 32,
+    "TYPE": "I",
+    "MQTT_TOPIC":"right0"
+  }
+  ,	
+  {
+    "PIN": 33,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right1"
+  },
+  {
+    "PIN": 34,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right2"
+  },
+  {
+    "PIN": 35,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right3"
+  },
+  {
+    "PIN": 36,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right4"
+  },
+  {
+    "PIN": 37,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right5"
+  },
+  {
+    "PIN": 38,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right6"
+  },
+  {
+    "PIN": 39,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right7"
+  },
+  {
+    "PIN": 40,
+    "TYPE": "I",
+    "MQTT_TOPIC": "right8"
+  },
+  {
+    "PIN": 41,
+    "TYPE": "I",
+    "MQTT_TOPIC":"right9"
+  },
+  {
+    "PIN": 42,
+    "TYPE": "I",
+    "MQTT_TOPIC":"rightRed"
+  },
+  {
+    "PIN": 43,
+    "TYPE": "I",
+    "MQTT_TOPIC":"rightGreen"
+  },
+  {
+    "PIN": 44,
+    "TYPE": "I",
+    "MQTT_TOPIC":"rightBlue"
+  },
+  {
+    "PIN": 45,
+    "TYPE": "I",
+    "MQTT_TOPIC":"rightYellow"
+  },
+  {
+    "PIN": 46,
+    "TYPE": "I",
+    "MQTT_TOPIC":"rightWhite"
+  },
+  {
+    "PIN": 56,
+    "TYPE": "I",
+    "MQTT_TOPIC":"leftRed"
+  },
+  {
+    "PIN": 57,
+    "TYPE": "I",
+    "MQTT_TOPIC":"leftGreen"
+  },
+  {"PIN": 58,
+   "TYPE": "I",
+   "MQTT_TOPIC":"leftBlue"
+  },
+  {"PIN":59,
+   "TYPE":"I",
+   "MQTT_TOPIC":"leftYellow"
+  },
+  {
+    "PIN":60,
+    "TYPE":"I",
+    "MQTT_TOPIC":"leftWhite"
+  }
+],
+  "BUSES": [
+    {
+      "ADDRESS": 32,
+      "NUM_PINS": 16
+    },
+    {
+      "ADDRESS": 33,
+      "NUM_PINS": 16
+    }
+  ],
+"MATRICIES" : [
+      { "NAME" : "leftKeypad",
+        "TYPE" : "adafruit3x4",
+        "ROWS" : [3, 4, 5, 6],
+        "COLS" : [0, 1, 2],
+        "KEYS" : [["left1", "left2", "left3"],
+                  ["left4", "left5", "left6"],
+                  ["left7", "left8", "left9"],
+                  ["asterik", "0", "pound"]],
+        "DEBOUNCE_CYCLES" : 5 }],
+  "EXPANDER_IN_USE": true,
+  "EXPANDER_THRESHOLD":  32,
+  "MQTT_ROOT": "/Paradox/TFD/GPIO",
+  "POLL_TIME": 15,
+  "MQTT_ANNOUNCE": "misc",
+  "DEBOUNCE_CYCLES": 5,
+  "MQTT_SERVER": "localhost"
+}
