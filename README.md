@@ -17,7 +17,7 @@ Pio (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
 
 ## Paradox Family
 
-Pio is one of seven Paradox products. All use the shared MQTT topic convention `{baseTopic}/{commands|state|status|warnings}`.
+Pio is one of seven Paradox products. All use the shared MQTT topic convention `{baseTopic}/{commands|events|state|warnings}`.
 
 - **PFx** — media/audio/lights/relays controller (Node.js)
 - **PxO** — game orchestration engine (Node.js, EDN)
