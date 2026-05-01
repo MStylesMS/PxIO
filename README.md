@@ -24,7 +24,7 @@ Pio is one of seven Paradox products. All use the shared MQTT topic convention `
 - **PxC** — configurable clock app framework (React build)
 - **PxT** — player terminal kiosk (Electron)
 - **Pio** — this project, GPIO-to-MQTT bridge (C++)
-- **PZB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
+- **PxB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
 - Rooms: `agent22`, `houdinis-challenge` — game packages consumed by PxO + PFx
 
 ## Build (Current)
