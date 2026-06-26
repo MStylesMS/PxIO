@@ -11,6 +11,16 @@ static std::string resolveTopic(const std::string &base_topic,
     return base_topic + "/" + io_topic;
 }
 
+// ─── pin resolution helper ───────────────────────────────────────────────────
+// Supports "17" (native) and "bus_name:offset" (expander — returns offset).
+static unsigned int resolvePin(const std::string &pin_str)
+{
+    auto colon = pin_str.find(':');
+    if (colon != std::string::npos)
+        return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
+    return static_cast<unsigned int>(std::stoi(pin_str));
+}
+
 // ─── construction ─────────────────────────────────────────────────────────────
 
 DigitalIn::DigitalIn(const GpioEndpointConfig &cfg,
@@ -26,7 +36,7 @@ bool DigitalIn::init()
     // builder in main_rpi.cpp.  Store the raw io_topic for now; caller sets it.
     resolved_topic_ = cfg_.io_topic; // overwritten by factory in main_rpi.cpp
 
-    unsigned int pin = static_cast<unsigned int>(std::stoi(cfg_.pin));
+    unsigned int pin = resolvePin(cfg_.pin);
     if (!gpio_->requestLine(pin, PinDirection::INPUT))
     {
         LOG_WARN("DigitalIn: failed to request pin " + cfg_.pin + " for endpoint gpio:" + cfg_.name);
@@ -45,7 +55,7 @@ void DigitalIn::shutdown()
 {
     if (available_)
     {
-        gpio_->releaseLine(static_cast<unsigned int>(std::stoi(cfg_.pin)));
+        gpio_->releaseLine(resolvePin(cfg_.pin));
         available_ = false;
     }
 }
@@ -56,7 +66,7 @@ bool DigitalIn::read(std::string &value_out)
 {
     if (!available_)
         return false;
-    int v = gpio_->getValue(static_cast<unsigned int>(std::stoi(cfg_.pin)));
+    int v = gpio_->getValue(resolvePin(cfg_.pin));
     if (v < 0)
         return false;
     value_out = std::to_string(v);
@@ -76,7 +86,7 @@ bool DigitalIn::setMode(const std::string &mode)
         LOG_WARN("DigitalIn: set_mode rejected — allow_mode_switch=false on gpio:" + cfg_.name);
         return false;
     }
-    unsigned int pin = static_cast<unsigned int>(std::stoi(cfg_.pin));
+    unsigned int pin = resolvePin(cfg_.pin);
     PinDirection dir = (mode == "output") ? PinDirection::OUTPUT : PinDirection::INPUT;
     return gpio_->setDirection(pin, dir);
 }
@@ -87,7 +97,7 @@ bool DigitalIn::pollAndCheckChanged()
 {
     if (!available_)
         return false;
-    unsigned int pin = static_cast<unsigned int>(std::stoi(cfg_.pin));
+    unsigned int pin = resolvePin(cfg_.pin);
     int raw = gpio_->getValue(pin);
     if (raw < 0)
         return false;

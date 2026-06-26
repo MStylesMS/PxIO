@@ -1,6 +1,16 @@
 #include "digital_out.h"
 #include "../../../shared/log/logger.h"
 
+// ─── pin resolution helper ───────────────────────────────────────────────────
+// Supports "17" (native) and "bus_name:offset" (expander — returns offset).
+static unsigned int resolvePin(const std::string &pin_str)
+{
+    auto colon = pin_str.find(':');
+    if (colon != std::string::npos)
+        return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
+    return static_cast<unsigned int>(std::stoi(pin_str));
+}
+
 DigitalOut::DigitalOut(const GpioEndpointConfig &cfg,
                        std::shared_ptr<GpioProvider> gpio,
                        bool global_retain)
@@ -10,7 +20,7 @@ bool DigitalOut::init()
 {
     resolved_topic_ = cfg_.io_topic; // overwritten by factory in main_rpi.cpp
 
-    unsigned int pin = static_cast<unsigned int>(std::stoi(cfg_.pin));
+    unsigned int pin = resolvePin(cfg_.pin);
     if (!gpio_->requestLine(pin, PinDirection::OUTPUT))
     {
         LOG_WARN("DigitalOut: failed to request pin " + cfg_.pin + " for endpoint gpio:" + cfg_.name);
@@ -30,8 +40,8 @@ void DigitalOut::shutdown()
 {
     if (available_)
     {
-        gpio_->setValue(static_cast<unsigned int>(std::stoi(cfg_.pin)), 0); // safe low
-        gpio_->releaseLine(static_cast<unsigned int>(std::stoi(cfg_.pin)));
+        gpio_->setValue(resolvePin(cfg_.pin), 0); // safe low
+        gpio_->releaseLine(resolvePin(cfg_.pin));
         available_ = false;
     }
 }
@@ -52,7 +62,7 @@ bool DigitalOut::write(const std::string &value)
         return false;
     }
     int v = (value == "1" || value == "true") ? 1 : 0;
-    unsigned int pin = static_cast<unsigned int>(std::stoi(cfg_.pin));
+    unsigned int pin = resolvePin(cfg_.pin);
     if (!gpio_->setValue(pin, v))
         return false;
     last_value_ = std::to_string(v);
@@ -77,5 +87,5 @@ bool DigitalOut::setMode(const std::string &mode)
         dir = PinDirection::OUTPUT;
         current_mode_ = Mode::OUTPUT;
     }
-    return gpio_->setDirection(static_cast<unsigned int>(std::stoi(cfg_.pin)), dir);
+    return gpio_->setDirection(resolvePin(cfg_.pin), dir);
 }
