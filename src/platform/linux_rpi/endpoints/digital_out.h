@@ -27,7 +27,12 @@ public:
     bool write(const std::string &value) override;
     bool setMode(const std::string &mode) override;
 
-    bool pollAndCheckChanged() override { return false; } // outputs don't auto-publish
+    bool pollAndCheckChanged() override
+    {
+        if (last_value_ == last_published_) return false;
+        last_published_ = last_value_;
+        return true;
+    }
     std::string lastValue() const override { return last_value_; }
     void setResolvedTopic(const std::string &t) override { resolved_topic_ = t; }
 
@@ -38,5 +43,6 @@ private:
     bool available_{false};
     std::string resolved_topic_;
     std::string last_value_{"0"};
+    std::string last_published_{""};
     Mode current_mode_{Mode::OUTPUT};
 };

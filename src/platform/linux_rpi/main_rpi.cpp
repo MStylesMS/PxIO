@@ -329,6 +329,16 @@ int main(int argc, char *argv[])
     telemetry->publishAnnounce();
     telemetry->publishState();
 
+    // Publish initial IO values for all endpoints so subscribers see current state
+    for (auto &ep : registry->all())
+    {
+        if (!ep->isAvailable()) continue;
+        const std::string &val = ep->lastValue();
+        if (!val.empty())
+            transport->publish(ep->resolvedTopic(), val,
+                               cfg.mqtt.qos, ep->retainEnabled());
+    }
+
     // ── main loop ─────────────────────────────────────────────────────────────
     LOG_INFO("main: bridge running (poll_interval=" + std::to_string(cfg.global.poll_interval_ms) + "ms)");
 
