@@ -202,7 +202,7 @@ static void buildRegistry(
 
 struct CliArgs
 {
-    std::string config_path = "pio.ini";
+    std::string config_path = "pxio.ini";
     std::string log_file; // empty = not set via CLI
     bool use_mock_gpio = false;
 };
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
     CliArgs cli = parseCli(argc, argv);
 
     // Bootstrap logger (file sink applied after config load if needed)
-    LOG_INFO("Pio v" + std::string(PIO_VERSION) + " starting");
+    LOG_INFO("PxIO v" + std::string(PXIO_VERSION) + " starting");
 
     // Load config
     AppConfig cfg;
@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 
     // GPIO provider
     std::shared_ptr<GpioProvider> native_gpio;
-#ifdef PIO_GPIO_MOCK
+#ifdef PXIO_GPIO_MOCK
     LOG_INFO("main: using MockGpioProvider");
     auto mock_prov = std::make_shared<MockGpioProvider>();
     mock_prov->openChip("/dev/gpiochip0");
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
     // Telemetry publisher
     auto telemetry = std::make_shared<TelemetryPublisher>(
         transport, cfg.mqtt, cfg.global, registry,
-        cfg.config_file_path, PIO_VERSION);
+        cfg.config_file_path, PXIO_VERSION);
 
     // Command dispatcher
     auto dispatcher = std::make_shared<CommandDispatcher>(

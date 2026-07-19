@@ -1,19 +1,19 @@
-# Pio MQTT API Reference
+# PxIO MQTT API Reference
 
 Version: 0.2.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-Pio (Paradox IO) uses MQTT for all bridge communication.
+PxIO (Paradox IO) uses MQTT for all bridge communication.
 
 Communication model:
-- Commands: control systems to Pio
-- State: Pio to control systems
-- Events: Pio operational and command outcome events
-- Warnings: Pio warnings and errors
-- Announce: Pio one-time online announcement
-- Heartbeat: Pio periodic health status
+- Commands: control systems to PxIO
+- State: PxIO to control systems
+- Events: PxIO operational and command outcome events
+- Warnings: PxIO warnings and errors
+- Announce: PxIO one-time online announcement
+- Heartbeat: PxIO periodic health status
 
 Design rules:
 - IO data topics use simple string payloads whenever possible.
@@ -79,7 +79,7 @@ Published to state_topic.
 
 {
   "timestamp": "2026-04-16T18:30:00.000Z",
-  "application": "pio",
+  "application": "pxio",
   "instance": "rpi-main",
   "status": "running",
   "uptime_s": 120,
@@ -140,15 +140,15 @@ Warning/error message fields:
 
 ### Announce Message Format
 
-Published once to announce_topic when Pio comes online.
+Published once to announce_topic when PxIO comes online.
 
 {
   "timestamp": "2026-04-16T18:30:00.000Z",
-  "application": "pio",
+  "application": "pxio",
   "instance": "rpi-main",
   "status": "online",
   "version": "0.1.0",
-  "config_file": "pio.ini"
+  "config_file": "pxio.ini"
 }
 
 ### Heartbeat Message Format
@@ -157,7 +157,7 @@ Published periodically to heartbeat_topic at heartbeat_interval_ms.
 
 {
   "timestamp": "2026-04-16T18:30:05.000Z",
-  "application": "pio",
+  "application": "pxio",
   "instance": "rpi-main",
   "alive": true,
   "status": "running",
@@ -217,7 +217,7 @@ Reload active INI file.
   "command": "reload_config"
 }
 
-If reload fails, Pio publishes warning and continues with current active config.
+If reload fails, PxIO publishes warning and continues with current active config.
 
 ### ping
 
@@ -230,7 +230,7 @@ Health check.
 
 ### Command Processing Behavior
 
-For each command received on commands_topic, Pio publishes command outcome events to events_topic:
+For each command received on commands_topic, PxIO publishes command outcome events to events_topic:
 1. command_received
 2. command_success, command_failed, or command_warning
 
@@ -291,7 +291,7 @@ Non-canonical examples:
 
 ## Error Handling
 
-Pio publishes warning and error JSON to warnings_topic.
+PxIO publishes warning and error JSON to warnings_topic.
 
 Common warning/error codes:
 - invalid_message_format
@@ -320,7 +320,7 @@ Suggested defaults:
 | Heartbeat | 0 | Presence-based and periodic |
 | IO data | 0 or 1 | Depends on endpoint criticality |
 
-Pio default remains qos = 1 unless overridden in INI.
+PxIO default remains qos = 1 unless overridden in INI.
 
 ## Examples
 
@@ -342,7 +342,7 @@ mosquitto_sub -h localhost -t "paradox/spycatcher/#" -v
 
 ## Compatibility Notes
 
-This Pio contract follows the established Paradox topic pattern:
+This PxIO contract follows the established Paradox topic pattern:
 - commands
 - state
 - events

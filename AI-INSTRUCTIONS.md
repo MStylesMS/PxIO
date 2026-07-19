@@ -1,6 +1,6 @@
-﻿# Pio — AI Instructions
+﻿# PxIO — AI Instructions
 
-Pio is the **GPIO-to-MQTT bridge** for Paradox (C++). It publishes inputs and accepts outputs over MQTT using the suite topic contract `{baseTopic}/{commands|events|state|warnings}`.
+PxIO is the **GPIO-to-MQTT bridge** for Paradox (C++). It publishes inputs and accepts outputs over MQTT using the suite topic contract `{baseTopic}/{commands|events|state|warnings}`.
 
 ## Docs
 

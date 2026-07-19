@@ -24,18 +24,18 @@ static std::string writeTempIni(const std::string &contents)
 
 static const char *kMinimalIni = R"(
 [global]
-instance_name = test_pio
+instance_name = test_pxio
 
 [mqtt]
 host = localhost
-client_id = pio_test
-base_topic = pio/test
-commands_topic = pio/test/commands
-state_topic = pio/test/state
-events_topic = pio/test/events
-warnings_topic = pio/test/warnings
-announce_topic = pio/test/announce
-heartbeat_topic = pio/test/heartbeat
+client_id = pxio_test
+base_topic = pxio/test
+commands_topic = pxio/test/commands
+state_topic = pxio/test/state
+events_topic = pxio/test/events
+warnings_topic = pxio/test/warnings
+announce_topic = pxio/test/announce
+heartbeat_topic = pxio/test/heartbeat
 )";
 
 TEST(ConfigLoader, LoadsMinimalConfig)
@@ -44,29 +44,29 @@ TEST(ConfigLoader, LoadsMinimalConfig)
     AppConfig cfg;
     ASSERT_TRUE(ConfigLoader::load(path, cfg));
 
-    EXPECT_EQ(cfg.global.instance_name, "test_pio");
+    EXPECT_EQ(cfg.global.instance_name, "test_pxio");
     EXPECT_EQ(cfg.mqtt.host, "localhost");
-    EXPECT_EQ(cfg.mqtt.client_id, "pio_test");
-    EXPECT_EQ(cfg.mqtt.base_topic, "pio/test");
+    EXPECT_EQ(cfg.mqtt.client_id, "pxio_test");
+    EXPECT_EQ(cfg.mqtt.base_topic, "pxio/test");
 }
 
 // ─── Unknown keys warn but do not fail ───────────────────────────────────────
 
 static const char *kUnknownKeyIni = R"(
 [global]
-instance_name = pio
+instance_name = pxio
 furble_wumble = this_key_does_not_exist
 
 [mqtt]
 host = localhost
 client_id = test
-base_topic = pio
-commands_topic = pio/commands
-state_topic = pio/state
-events_topic = pio/events
-warnings_topic = pio/warnings
-announce_topic = pio/announce
-heartbeat_topic = pio/heartbeat
+base_topic = pxio
+commands_topic = pxio/commands
+state_topic = pxio/state
+events_topic = pxio/events
+warnings_topic = pxio/warnings
+announce_topic = pxio/announce
+heartbeat_topic = pxio/heartbeat
 )";
 
 TEST(ConfigLoader, UnknownKeyDoesNotFailLoad)
@@ -81,17 +81,17 @@ TEST(ConfigLoader, UnknownKeyDoesNotFailLoad)
 
 static const char *kMissingHostIni = R"(
 [global]
-instance_name = pio
+instance_name = pxio
 
 [mqtt]
 client_id = test
-base_topic = pio
-commands_topic = pio/commands
-state_topic = pio/state
-events_topic = pio/events
-warnings_topic = pio/warnings
-announce_topic = pio/announce
-heartbeat_topic = pio/heartbeat
+base_topic = pxio
+commands_topic = pxio/commands
+state_topic = pxio/state
+events_topic = pxio/events
+warnings_topic = pxio/warnings
+announce_topic = pxio/announce
+heartbeat_topic = pxio/heartbeat
 )";
 
 TEST(ConfigLoader, MissingMqttHostFails)
@@ -105,17 +105,17 @@ TEST(ConfigLoader, MissingMqttHostFails)
 
 static const char *kMissingClientIdIni = R"(
 [global]
-instance_name = pio
+instance_name = pxio
 
 [mqtt]
 host = localhost
-base_topic = pio
-commands_topic = pio/commands
-state_topic = pio/state
-events_topic = pio/events
-warnings_topic = pio/warnings
-announce_topic = pio/announce
-heartbeat_topic = pio/heartbeat
+base_topic = pxio
+commands_topic = pxio/commands
+state_topic = pxio/state
+events_topic = pxio/events
+warnings_topic = pxio/warnings
+announce_topic = pxio/announce
+heartbeat_topic = pxio/heartbeat
 )";
 
 TEST(ConfigLoader, MissingClientIdFails)
@@ -129,18 +129,18 @@ TEST(ConfigLoader, MissingClientIdFails)
 
 static const char *kWithGpioIni = R"(
 [global]
-instance_name = pio
+instance_name = pxio
 
 [mqtt]
 host = localhost
-client_id = pio
-base_topic = pio
-commands_topic = pio/commands
-state_topic = pio/state
-events_topic = pio/events
-warnings_topic = pio/warnings
-announce_topic = pio/announce
-heartbeat_topic = pio/heartbeat
+client_id = pxio
+base_topic = pxio
+commands_topic = pxio/commands
+state_topic = pxio/state
+events_topic = pxio/events
+warnings_topic = pxio/warnings
+announce_topic = pxio/announce
+heartbeat_topic = pxio/heartbeat
 
 [gpio:led_red]
 type = digital_out

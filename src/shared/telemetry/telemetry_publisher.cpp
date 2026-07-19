@@ -26,7 +26,7 @@ void TelemetryPublisher::publishAnnounce()
 {
     json j;
     j["timestamp"] = isoNow();
-    j["application"] = "pio";
+    j["application"] = "pxio";
     j["instance"] = global_config_.instance_name;
     j["status"] = "online";
     j["version"] = version_;
@@ -43,7 +43,7 @@ void TelemetryPublisher::publishState()
 {
     json j;
     j["timestamp"] = isoNow();
-    j["application"] = "pio";
+    j["application"] = "pxio";
     j["instance"] = global_config_.instance_name;
     j["status"] = "running";
     j["uptime_s"] = uptimeSeconds();
@@ -89,7 +89,7 @@ void TelemetryPublisher::tick()
 
     json j;
     j["timestamp"] = isoNow();
-    j["application"] = "pio";
+    j["application"] = "pxio";
     j["instance"] = global_config_.instance_name;
     j["alive"] = true;
     j["status"] = "running";

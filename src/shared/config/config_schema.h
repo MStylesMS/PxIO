@@ -8,7 +8,7 @@
 
 struct GlobalConfig
 {
-    std::string instance_name = "pio";
+    std::string instance_name = "pxio";
     LogLevel log_level = LogLevel::INFO;
     int poll_interval_ms = 20;
     std::string message_level = "INFO";

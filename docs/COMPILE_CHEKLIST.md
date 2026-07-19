@@ -1,4 +1,4 @@
-# Pio Compile + Implementation Checklist
+# PxIO Compile + Implementation Checklist
 
 Version: 0.1.0-draft  
 Last Updated: 2026-04-16
@@ -31,7 +31,7 @@ Status values:
 | 17 | Runtime/service packaging now: systemd unit in phase 1 or defer? | Yes. Include systemd service unit in phase 1. Pi deployments are headless and require persistent service management and auto-restart. | Answered |
 | 18 | Logging sink now: stdout only, stdout+journald, or file logging as first-class option? | Default: stdout/stderr only (journald captures via systemd). Optional log file output configurable via INI key log_file or CLI flag --log-file. CLI overrides INI. If neither specified, stdout/stderr only. Log file scope: major events and errors only. | Answered |
 | 19 | Hardware validation matrix: minimum boards physically available for acceptance testing. | Pi 5 (arm64, Trixie); Pi 4 (arm64, Trixie); Pi 3 (arm64 and armv6hf, Trixie); Zero W (armv6hf, 32-bit, Trixie); Zero 2 W (arm64, Trixie). | Answered |
-| 20 | Release artifact policy: do we publish one arm64 and one armv6hf build as baseline artifacts? | Yes. Two binaries: pio-linux-arm64 and pio-linux-armv6hf. | Answered |
+| 20 | Release artifact policy: do we publish one arm64 and one armv6hf build as baseline artifacts? | Yes. Two binaries: pxio-linux-arm64 and pxio-linux-armv6hf. | Answered |
 | 21 | Build host strategy: are we building on oldest supported distro/sysroot for forward compatibility? | Trixie is the oldest and only supported release. Build and ship binaries targeting Trixie glibc and libgpiod v2. No prior release sysroot required. | Answered |
 | 22 | CI/release matrix policy: which Pi OS releases are officially supported/tested (for example prior release + Trixie)? | Trixie only. Prior release (Bookworm) is not officially supported. | Answered |
 
@@ -69,12 +69,12 @@ Phase 1: per-endpoint QoS override is not implemented; QoS is global only.
 
 INI key (under [global]):
 ```ini
-log_file = /var/log/pio/pio.log
+log_file = /var/log/pxio/pxio.log
 ```
 
 CLI flag:
 ```
-pio --log-file /var/log/pio/pio.log
+pxio --log-file /var/log/pxio/pxio.log
 ```
 
 CLI value takes precedence over INI value. If neither is set, only stdout/stderr are used.
@@ -97,8 +97,8 @@ Two binaries for all supported hardware:
 
 | Artifact | Build Target | Build On | Runs On Models | OS Bitness | Distro |
 |---|---|---|---|---|---|
-| pio-linux-arm64 | aarch64-linux-gnu | Trixie | Pi 3, Pi 4, Pi 5, Zero 2 W | 64-bit | Trixie |
-| pio-linux-armv6hf | arm-linux-gnueabihf (armv6 baseline) | Trixie | Zero W, Pi 3, Pi 4, Pi 5, Zero 2 W (when running 32-bit OS) | 32-bit | Trixie |
+| pxio-linux-arm64 | aarch64-linux-gnu | Trixie | Pi 3, Pi 4, Pi 5, Zero 2 W | 64-bit | Trixie |
+| pxio-linux-armv6hf | arm-linux-gnueabihf (armv6 baseline) | Trixie | Zero W, Pi 3, Pi 4, Pi 5, Zero 2 W (when running 32-bit OS) | 32-bit | Trixie |
 
 ### Build strategy
 

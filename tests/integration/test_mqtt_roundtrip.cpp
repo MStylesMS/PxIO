@@ -24,13 +24,13 @@ static MqttConfig makeTestMqttConfig()
     MqttConfig c;
     c.host = "localhost";
     c.client_id = "pio_integration";
-    c.base_topic = "pio/integration";
-    c.commands_topic = "pio/integration/commands";
-    c.state_topic = "pio/integration/state";
-    c.events_topic = "pio/integration/events";
-    c.warnings_topic = "pio/integration/warnings";
-    c.announce_topic = "pio/integration/announce";
-    c.heartbeat_topic = "pio/integration/heartbeat";
+    c.base_topic = "pxio/integration";
+    c.commands_topic = "pxio/integration/commands";
+    c.state_topic = "pxio/integration/state";
+    c.events_topic = "pxio/integration/events";
+    c.warnings_topic = "pxio/integration/warnings";
+    c.announce_topic = "pxio/integration/announce";
+    c.heartbeat_topic = "pxio/integration/heartbeat";
     return c;
 }
 
@@ -77,7 +77,7 @@ TEST(MqttRoundtrip, WriteCommandChangesGpioAndPublishesSuccess)
     auto ep = std::make_shared<DigitalOut>(ocfg, gpio, false);
     gpio->requestLine(18, PinDirection::OUTPUT);
     ep->init();
-    ep->setResolvedTopic("pio/integration/gpio/relay");
+    ep->setResolvedTopic("pxio/integration/gpio/relay");
     registry->add("gpio:relay", ep);
 
     // Subscribe commands (simulate transport subscription)
@@ -141,7 +141,7 @@ TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic)
     auto ep = std::make_shared<DigitalIn>(icfg, gpio, false);
     gpio->requestLine(22, PinDirection::INPUT);
     ep->init();
-    ep->setResolvedTopic("pio/integration/gpio/sensor");
+    ep->setResolvedTopic("pxio/integration/gpio/sensor");
     registry->add("gpio:sensor", ep);
 
     transport->subscribe(mqtt_cfg.commands_topic, 1,
@@ -155,7 +155,7 @@ TEST(MqttRoundtrip, ReadCommandPublishesValueToIoTopic)
                       makeCmdJson("read", "gpio:sensor"));
 
     // A publish to the IO topic should have occurred
-    auto io_pub = transport->lastPublish("pio/integration/gpio/sensor");
+    auto io_pub = transport->lastPublish("pxio/integration/gpio/sensor");
     ASSERT_TRUE(io_pub.has_value()) << "Expected publish to IO topic for 'read' command";
     // Value should be "1" (preset value HIGH)
     EXPECT_EQ(io_pub->payload, "1");

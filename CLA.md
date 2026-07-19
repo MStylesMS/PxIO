@@ -1,8 +1,8 @@
-# Pio Contributor License Agreement (CLA)
+# PxIO Contributor License Agreement (CLA)
 
 **Version 1.0 — May 2026**
 
-Thank you for your interest in contributing to Pio ("the Project"), a project of Mark Stevens ("the Project Owner"). To clarify the intellectual property license granted with Contributions from any person or entity, the Project Owner must have a Contributor License Agreement ("CLA") on file that has been signed by each Contributor, indicating agreement to the license terms below.
+Thank you for your interest in contributing to PxIO ("the Project"), a project of Mark Stevens ("the Project Owner"). To clarify the intellectual property license granted with Contributions from any person or entity, the Project Owner must have a Contributor License Agreement ("CLA") on file that has been signed by each Contributor, indicating agreement to the license terms below.
 
 This agreement is for your protection as a Contributor as well as the protection of the Project Owner; it does not change your rights to use your own Contributions for any other purpose.
 
@@ -17,7 +17,7 @@ By signing this CLA (see "How to sign" at the end), you accept and agree to the 
 
 Subject to the terms and conditions of this Agreement, You hereby grant to the Project Owner and to recipients of software distributed by the Project Owner a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
 
-You further grant the Project Owner the right to **relicense** Your Contributions under any license of the Project Owner's choosing, including proprietary commercial licenses. This right is what enables Pio's dual-licensing model (AGPL-3.0 + commercial); see [COMMERCIAL.md](COMMERCIAL.md).
+You further grant the Project Owner the right to **relicense** Your Contributions under any license of the Project Owner's choosing, including proprietary commercial licenses. This right is what enables PxIO's dual-licensing model (AGPL-3.0 + commercial); see [COMMERCIAL.md](COMMERCIAL.md).
 
 ## 3. Grant of Patent License
 
@@ -49,14 +49,14 @@ You agree to notify the Project Owner of any facts or circumstances of which You
 
 ## How to sign
 
-Pio accepts CLA sign-off using the **Developer Certificate of Origin (DCO)** style sign-off plus an explicit one-time CLA acceptance comment on your first pull request. There are two paths:
+PxIO accepts CLA sign-off using the **Developer Certificate of Origin (DCO)** style sign-off plus an explicit one-time CLA acceptance comment on your first pull request. There are two paths:
 
 ### A. Individual contributors
 
 1. **Sign your commits** with `git commit -s` (or `--signoff`). This appends a line of the form `Signed-off-by: Your Name <you@example.com>` to every commit message.
 2. **On your first pull request**, leave a comment containing exactly:
 
-   > I have read the Pio CLA at `CLA.md` and I accept its terms for all my past, present, and future Contributions to Pio.
+   > I have read the PxIO CLA at `CLA.md` and I accept its terms for all my past, present, and future Contributions to PxIO.
    > Signed: \<Your Full Legal Name\>, \<your@email\>, \<YYYY-MM-DD\>
 
 3. The Project Owner will record your acceptance in the project's contributor ledger before your PR is merged.
@@ -76,6 +76,6 @@ The Project Owner will reply to confirm acceptance and update the contributor le
 
 ## Why a CLA?
 
-Pio is dual-licensed: AGPL-3.0 by default, with a separate commercial license available for closed-source / proprietary deployments (see [COMMERCIAL.md](COMMERCIAL.md)). The commercial license model only works if the Project Owner has the right to relicense all the code in the project. The CLA is what makes that right explicit — without it, every contributor would retain veto power over commercial relicensing of their code, which would break the dual-license model.
+PxIO is dual-licensed: AGPL-3.0 by default, with a separate commercial license available for closed-source / proprietary deployments (see [COMMERCIAL.md](COMMERCIAL.md)). The commercial license model only works if the Project Owner has the right to relicense all the code in the project. The CLA is what makes that right explicit — without it, every contributor would retain veto power over commercial relicensing of their code, which would break the dual-license model.
 
-This CLA is modeled on the widely used Apache Individual CLA and the Harmony project CLA, adapted to Pio's dual-license structure. If you have legal questions before signing, please raise an issue or email <mark@paradoxrooms.com>.
+This CLA is modeled on the widely used Apache Individual CLA and the Harmony project CLA, adapted to PxIO's dual-license structure. If you have legal questions before signing, please raise an issue or email <mark@paradoxrooms.com>.

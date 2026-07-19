@@ -32,13 +32,13 @@ struct DispatcherFixture : ::testing::Test
     {
         mqtt_cfg.host = "localhost";
         mqtt_cfg.client_id = "test";
-        mqtt_cfg.base_topic = "pio/test";
-        mqtt_cfg.commands_topic = "pio/test/commands";
-        mqtt_cfg.state_topic = "pio/test/state";
-        mqtt_cfg.events_topic = "pio/test/events";
-        mqtt_cfg.warnings_topic = "pio/test/warnings";
-        mqtt_cfg.announce_topic = "pio/test/announce";
-        mqtt_cfg.heartbeat_topic = "pio/test/heartbeat";
+        mqtt_cfg.base_topic = "pxio/test";
+        mqtt_cfg.commands_topic = "pxio/test/commands";
+        mqtt_cfg.state_topic = "pxio/test/state";
+        mqtt_cfg.events_topic = "pxio/test/events";
+        mqtt_cfg.warnings_topic = "pxio/test/warnings";
+        mqtt_cfg.announce_topic = "pxio/test/announce";
+        mqtt_cfg.heartbeat_topic = "pxio/test/heartbeat";
 
         transport = std::make_shared<MockTransport>();
         registry = std::make_shared<EndpointRegistry>();
@@ -63,7 +63,7 @@ struct DispatcherFixture : ::testing::Test
         auto out_ep = std::make_shared<DigitalOut>(ocfg, gpio, false);
         gpio->requestLine(17, PinDirection::OUTPUT);
         out_ep->init();
-        out_ep->setResolvedTopic("pio/test/gpio/led");
+        out_ep->setResolvedTopic("pxio/test/gpio/led");
         registry->add("gpio:led", out_ep);
 
         // Register a digital_in endpoint
@@ -76,7 +76,7 @@ struct DispatcherFixture : ::testing::Test
         auto in_ep = std::make_shared<DigitalIn>(icfg, gpio, false);
         gpio->requestLine(27, PinDirection::INPUT);
         in_ep->init();
-        in_ep->setResolvedTopic("pio/test/gpio/button");
+        in_ep->setResolvedTopic("pxio/test/gpio/button");
         registry->add("gpio:button", in_ep);
     }
 };
@@ -103,7 +103,7 @@ static std::string makeCmd(const std::string &cmd_name,
 TEST_F(DispatcherFixture, InvalidJsonEmitsWarning)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands", "not_json{{{");
+    dispatcher->onCommandMessage("pxio/test/commands", "not_json{{{");
 
     // no command_received published
     auto evt = transport->lastPublish(mqtt_cfg.events_topic);
@@ -121,7 +121,7 @@ TEST_F(DispatcherFixture, InvalidJsonEmitsWarning)
 TEST_F(DispatcherFixture, ValidEnvelopeEmitsCommandReceived)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands",
+    dispatcher->onCommandMessage("pxio/test/commands",
                                  makeCmd("write", "gpio:led", "1"));
 
     // command_received must be the first event
@@ -147,7 +147,7 @@ TEST_F(DispatcherFixture, ValidEnvelopeEmitsCommandReceived)
 TEST_F(DispatcherFixture, WriteToOutputSucceeds)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands",
+    dispatcher->onCommandMessage("pxio/test/commands",
                                  makeCmd("write", "gpio:led", "1"));
 
     // command_success must be published
@@ -175,7 +175,7 @@ TEST_F(DispatcherFixture, WriteToOutputSucceeds)
 TEST_F(DispatcherFixture, WriteToInputEmitsWarning)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands",
+    dispatcher->onCommandMessage("pxio/test/commands",
                                  makeCmd("write", "gpio:button", "1"));
 
     // Events topic: command_warning event emitted
@@ -216,7 +216,7 @@ TEST_F(DispatcherFixture, WriteToInputEmitsWarning)
 TEST_F(DispatcherFixture, UnknownTargetFails)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands",
+    dispatcher->onCommandMessage("pxio/test/commands",
                                  makeCmd("write", "gpio:does_not_exist", "1"));
 
     // Events topic: COMMAND_FAILED
@@ -257,7 +257,7 @@ TEST_F(DispatcherFixture, UnknownTargetFails)
 TEST_F(DispatcherFixture, PingSucceeds)
 {
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands", makeCmd("ping"));
+    dispatcher->onCommandMessage("pxio/test/commands", makeCmd("ping"));
 
     bool success = false;
     for (auto &p : transport->published())
@@ -286,7 +286,7 @@ TEST_F(DispatcherFixture, ReloadConfigSuccess)
         return true; });
 
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands", makeCmd("reload_config"));
+    dispatcher->onCommandMessage("pxio/test/commands", makeCmd("reload_config"));
 
     EXPECT_TRUE(callback_called);
 
@@ -314,7 +314,7 @@ TEST_F(DispatcherFixture, ReloadConfigFailure)
                                   { return false; });
 
     transport->clearPublished();
-    dispatcher->onCommandMessage("pio/test/commands", makeCmd("reload_config"));
+    dispatcher->onCommandMessage("pxio/test/commands", makeCmd("reload_config"));
 
     // Dispatcher emits COMMAND_WARNING (not COMMAND_FAILED) when reload cb
     // returns false, so the bridge continues with the current config.

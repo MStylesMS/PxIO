@@ -109,7 +109,7 @@ bool LibgpiodProvider::requestLine(unsigned int pin, PinDirection direction)
 
     gpiod_request_config *req_cfg = gpiod_request_config_new();
     if (req_cfg)
-        gpiod_request_config_set_consumer(req_cfg, "pio");
+        gpiod_request_config_set_consumer(req_cfg, "pxio");
 
     gpiod_line_request *req = gpiod_chip_request_lines(chip_, req_cfg, line_cfg);
 

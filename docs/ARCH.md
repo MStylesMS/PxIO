@@ -1,11 +1,11 @@
-# Pio Software Architecture
+# PxIO Software Architecture
 
 Version: 0.1.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-Pio is a GPIO-to-MQTT bridge targeting Raspberry Pi initially but designed from the start for portability to ESP32 and other Linux platforms.
+PxIO is a GPIO-to-MQTT bridge targeting Raspberry Pi initially but designed from the start for portability to ESP32 and other Linux platforms.
 
 The architecture is divided into two explicit layers:
 
@@ -17,7 +17,7 @@ The architecture is divided into two explicit layers:
 ## Module Map
 
 ```
-pio/
+pxio/
 ├── src/
 │   ├── shared/                  ← portable, no platform dependencies
 │   │   ├── config/
@@ -281,12 +281,12 @@ Two official release artifacts:
 
 | Artifact | Toolchain | Target | OS |
 |---|---|---|---|
-| pio-linux-arm64 | aarch64-linux-gnu | Pi 3/4/5, Zero 2 W (64-bit) | Trixie |
-| pio-linux-armv6hf | arm-linux-gnueabihf | Zero W and any Pi on 32-bit OS | Trixie |
+| pxio-linux-arm64 | aarch64-linux-gnu | Pi 3/4/5, Zero 2 W (64-bit) | Trixie |
+| pxio-linux-armv6hf | arm-linux-gnueabihf | Zero W and any Pi on 32-bit OS | Trixie |
 
 CMake feature flags:
-- `PIO_GPIO_BACKEND`: `libgpiod` (default) or `mock`
-- `PIO_BUILD_TESTS`: `OFF` (default) or `ON`
+- `PXIO_GPIO_BACKEND`: `libgpiod` (default) or `mock`
+- `PXIO_BUILD_TESTS`: `OFF` (default) or `ON`
 
 Build host: Pi 5 running Trixie (native arm64 build + cross-compile armv6hf via installed toolchain).
 

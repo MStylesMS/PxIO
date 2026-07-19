@@ -20,38 +20,38 @@ static std::string resolveTopic(const std::string &base, const std::string &io)
 
 TEST(TopicResolution, RelativeTopicPrependsBase)
 {
-    EXPECT_EQ(resolveTopic("pio/home", "gpio/led"), "pio/home/gpio/led");
+    EXPECT_EQ(resolveTopic("pxio/home", "gpio/led"), "pxio/home/gpio/led");
 }
 
 TEST(TopicResolution, RelativeTopicWithDeepBase)
 {
-    EXPECT_EQ(resolveTopic("site/room/pio", "gpio/button"),
-              "site/room/pio/gpio/button");
+    EXPECT_EQ(resolveTopic("site/room/pxio", "gpio/button"),
+              "site/room/pxio/gpio/button");
 }
 
 TEST(TopicResolution, RelativeTopicEmptyIo)
 {
-    EXPECT_EQ(resolveTopic("pio/home", ""), "pio/home/");
+    EXPECT_EQ(resolveTopic("pxio/home", ""), "pxio/home/");
 }
 
 // ─── Absolute topics (leading '/') ───────────────────────────────────────────
 
 TEST(TopicResolution, AbsoluteTopicStripLeadingSlash)
 {
-    EXPECT_EQ(resolveTopic("pio/home", "/sensors/temperature"),
+    EXPECT_EQ(resolveTopic("pxio/home", "/sensors/temperature"),
               "sensors/temperature");
 }
 
 TEST(TopicResolution, AbsoluteTopicIgnoresBase)
 {
-    EXPECT_EQ(resolveTopic("pio/home", "/completely/different/path"),
+    EXPECT_EQ(resolveTopic("pxio/home", "/completely/different/path"),
               "completely/different/path");
 }
 
 TEST(TopicResolution, AbsoluteTopicOnlySlashBecomeEmpty)
 {
     // Edge case: io_topic = "/" → strips slash → empty string
-    EXPECT_EQ(resolveTopic("pio/home", "/"), "");
+    EXPECT_EQ(resolveTopic("pxio/home", "/"), "");
 }
 
 // ─── Base topic with trailing slash ──────────────────────────────────────────
@@ -60,5 +60,5 @@ TEST(TopicResolution, BaseWithTrailingSlashNoDoubleSlash)
 {
     // The caller is expected to not include a trailing slash on base_topic.
     // Verify the raw concat behaviour is predictable.
-    EXPECT_EQ(resolveTopic("pio/home/", "gpio/led"), "pio/home//gpio/led");
+    EXPECT_EQ(resolveTopic("pxio/home/", "gpio/led"), "pxio/home//gpio/led");
 }

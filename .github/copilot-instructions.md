@@ -1,4 +1,4 @@
-﻿# Copilot instructions — Pio
+﻿# Copilot instructions — PxIO
 
 Read [AI-INSTRUCTIONS.md](../AI-INSTRUCTIONS.md) for the canonical project AI context.
 

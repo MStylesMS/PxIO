@@ -1,11 +1,11 @@
-# Pio (Paradox IO) Specification
+# PxIO (Paradox IO) Specification
 
 Version: 0.2.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-Pio is a GPIO-to-MQTT bridge focused on Raspberry Pi in the initial release.
+PxIO is a GPIO-to-MQTT bridge focused on Raspberry Pi in the initial release.
 
 Primary objectives:
 - Bridge physical IO to MQTT topics using a deterministic contract.
@@ -78,8 +78,8 @@ Nested section names use colon separators, not dot separators.
 
 File model:
 - One config file per instance.
-- Default file name: pio.ini in current directory.
-- Override supported: pio --config <path>.
+- Default file name: pxio.ini in current directory.
+- Override supported: pxio --config <path>.
 
 ## MQTT Contract Requirements
 

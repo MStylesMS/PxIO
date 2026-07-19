@@ -1,11 +1,11 @@
-# Pio INI Configuration Guide
+# PxIO INI Configuration Guide
 
 Version: 0.2.0-draft  
 Last Updated: 2026-04-16
 
 ## Overview
 
-Pio uses INI files for bridge configuration.
+PxIO uses INI files for bridge configuration.
 
 INI responsibilities:
 - MQTT broker and topic settings
@@ -22,15 +22,15 @@ Design rules:
 ## File Location and Startup
 
 Default config file:
-- ./pio.ini
+- ./pxio.ini
 
 CLI override:
 
-pio --config /etc/pio/bridge-a.ini
-pio -c /etc/pio/bridge-a.ini
+pxio --config /etc/pxio/bridge-a.ini
+pxio -c /etc/pxio/bridge-a.ini
 
 Startup behavior:
-- If config file is missing or invalid, Pio exits with fatal error.
+- If config file is missing or invalid, PxIO exits with fatal error.
 - Active config path is included in startup logs.
 - Active config path is included in online announcement payload.
 
@@ -76,7 +76,7 @@ Bridge-level runtime settings.
 
 | Setting | Type | Required | Default | Description |
 |---|---|---|---|---|
-| instance_name | string | No | pio | Instance id used in telemetry |
+| instance_name | string | No | pxio | Instance id used in telemetry |
 | log_level | string | No | INFO | DEBUG, INFO, WARN, ERROR |
 | poll_interval_ms | integer | No | 20 | Main loop interval |
 | message_level | string | No | INFO | INFO or DEBUG event verbosity |
@@ -105,10 +105,10 @@ MQTT connection and contract topics.
 | qos | integer | No | 1 | Default publish QoS (0..2) |
 | global_retain | boolean | No | false | Default retain behavior for IO topics |
 | base_topic | string | Yes | N/A | Prefix for relative io_topic values |
-| commands_topic | string | Yes | N/A | Pio command input topic |
-| state_topic | string | Yes | N/A | Pio state output topic |
-| events_topic | string | Yes | N/A | Pio event output topic |
-| warnings_topic | string | Yes | N/A | Pio warnings/errors topic |
+| commands_topic | string | Yes | N/A | PxIO command input topic |
+| state_topic | string | Yes | N/A | PxIO state output topic |
+| events_topic | string | Yes | N/A | PxIO event output topic |
+| warnings_topic | string | Yes | N/A | PxIO warnings/errors topic |
 | announce_topic | string | Yes | N/A | One-shot online announcement topic |
 | heartbeat_topic | string | Yes | N/A | Periodic heartbeat topic |
 | heartbeat_interval_ms | integer | No | 5000 | Heartbeat period in ms |
@@ -119,7 +119,7 @@ Example:
 [mqtt]
 host = 127.0.0.1
 port = 1883
-client_id = pio-rpi-main
+client_id = pxio-rpi-main
 qos = 1
 global_retain = false
 base_topic = paradox/spycatcher
@@ -253,7 +253,7 @@ message_level = INFO
 [mqtt]
 host = 127.0.0.1
 port = 1883
-client_id = pio-rpi-main
+client_id = pxio-rpi-main
 qos = 1
 global_retain = false
 base_topic = paradox/spycatcher
@@ -297,7 +297,7 @@ scan_interval_ms = 100
 
 ## Validation Rules
 
-Pio validates configuration at startup.
+PxIO validates configuration at startup.
 
 Required checks:
 - [global] and [mqtt] sections exist

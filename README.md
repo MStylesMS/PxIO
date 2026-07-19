@@ -1,6 +1,6 @@
-# Pio
+# PxIO
 
-Pio (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
+PxIO (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
 
 ## What It Does
 
@@ -17,13 +17,13 @@ Pio (Paradox IO) is a GPIO-to-MQTT bridge focused on Raspberry Pi devices.
 
 ## Paradox Family
 
-Pio is one of seven Paradox products. All use the shared MQTT topic convention `{baseTopic}/{commands|events|state|warnings}`.
+PxIO is one of seven Paradox products. All use the shared MQTT topic convention `{baseTopic}/{commands|events|state|warnings}`.
 
 - **PFx** — media/audio/lights/relays controller (Node.js)
 - **PxO** — game orchestration engine (Node.js, EDN)
 - **PxC** — configurable clock app framework (React build)
 - **PxT** — player terminal kiosk (Electron)
-- **Pio** — this project, GPIO-to-MQTT bridge (C++)
+- **PxIO** — this project, GPIO-to-MQTT bridge (C++)
 - **PxB** — Z-Wave / Zigbee / Thread to MQTT bridge (Node.js)
 - Rooms: `agent22`, `houdinis-challenge` — game packages consumed by PxO + PFx
 

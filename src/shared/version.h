@@ -1,3 +1,3 @@
 #pragma once
 
-#define PIO_VERSION "0.2.0"
+#define PXIO_VERSION "0.2.0"
