@@ -79,6 +79,14 @@ bool KeypadMatrix::pollAndCheckChanged()
         return false;
     std::string key = scanOnce();
 
+    if (key.empty())
+    {
+        key_down_ = false;
+        candidate_key_.clear();
+        debounce_count_ = 0;
+        return false;
+    }
+
     if (key == candidate_key_)
     {
         ++debounce_count_;
@@ -89,8 +97,10 @@ bool KeypadMatrix::pollAndCheckChanged()
         debounce_count_ = 1;
     }
 
-    if (debounce_count_ >= cfg_.debounce_cycles && !key.empty() && key != last_published_)
+    // Fire once on debounced key-down; holding the key does not repeat.
+    if (debounce_count_ >= cfg_.debounce_cycles && !key_down_)
     {
+        key_down_ = true;
         last_published_ = key;
         debounce_count_ = 0;
         return true;
@@ -108,8 +118,8 @@ std::string KeypadMatrix::scanOnce()
 
         // Drive this row LOW
         gpio_->setValue(row_pin, 0);
-        // Brief settle — on real hardware a small delay improves reliability
-        std::this_thread::sleep_for(std::chrono::microseconds(10));
+        // Allow matrix to settle before sampling columns
+        std::this_thread::sleep_for(std::chrono::microseconds(500));
 
         for (std::size_t ci = 0; ci < cfg_.cols.size(); ++ci)
         {

@@ -44,8 +44,9 @@ private:
     bool available_{false};
     std::string resolved_topic_;
 
-    // Debounce
+    // Debounce / edge detect (publish once per key-down, allow repeat after release)
     int debounce_count_{0};
     std::string candidate_key_;
     std::string last_published_;
+    bool key_down_{false};
 };
