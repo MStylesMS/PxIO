@@ -10,7 +10,7 @@ PahoTransport::PahoTransport(const MqttConfig &config) : config_(config) {}
 
 PahoTransport::~PahoTransport()
 {
-    if (connected_)
+    if (client_)
         disconnect();
     if (client_)
         MQTTAsync_destroy(&client_);
@@ -37,9 +37,19 @@ bool PahoTransport::connect()
         return false;
     }
 
+    rc = MQTTAsync_setConnected(client_, this, onReconnect);
+    if (rc != MQTTASYNC_SUCCESS)
+    {
+        LOG_ERROR("PahoTransport: setConnected failed: " + std::to_string(rc));
+        return false;
+    }
+
     MQTTAsync_connectOptions opts = MQTTAsync_connectOptions_initializer;
     opts.keepAliveInterval = 60;
     opts.cleansession = 1;
+    opts.automaticReconnect = 1;
+    opts.minRetryInterval = 1;
+    opts.maxRetryInterval = 30;
     opts.onSuccess = onConnectSuccess;
     opts.onFailure = onConnectFailure;
     opts.context = this;
@@ -79,7 +89,7 @@ bool PahoTransport::connect()
 
 bool PahoTransport::disconnect()
 {
-    if (!connected_)
+    if (!client_)
         return true;
 
     MQTTAsync_disconnectOptions opts = MQTTAsync_disconnectOptions_initializer;
@@ -149,7 +159,7 @@ bool PahoTransport::subscribe(const std::string &topic, int qos, MessageCallback
 
     {
         std::lock_guard<std::mutex> lk(sub_mutex_);
-        subscriptions_[topic] = std::move(cb);
+        subscriptions_[topic] = Subscription{std::move(cb), qos};
     }
 
     MQTTAsync_responseOptions resp = MQTTAsync_responseOptions_initializer;
@@ -207,7 +217,31 @@ void PahoTransport::onConnectionLost(void *ctx, char *cause)
     auto *self = static_cast<PahoTransport *>(ctx);
     self->connected_ = false;
     std::string reason = cause ? std::string(cause) : "unknown";
-    LOG_WARN("PahoTransport: connection lost — " + reason);
+    LOG_WARN("PahoTransport: connection lost — " + reason + " (auto-reconnect enabled)");
+}
+
+void PahoTransport::onReconnect(void *ctx, char *cause)
+{
+    auto *self = static_cast<PahoTransport *>(ctx);
+    self->connected_ = true;
+    std::string reason = cause ? std::string(cause) : "";
+    LOG_INFO("PahoTransport: reconnected" + (reason.empty() ? "" : " — " + reason));
+    self->resubscribeAll();
+}
+
+void PahoTransport::resubscribeAll()
+{
+    std::lock_guard<std::mutex> lk(sub_mutex_);
+    for (const auto &entry : subscriptions_)
+    {
+        MQTTAsync_responseOptions resp = MQTTAsync_responseOptions_initializer;
+        int rc = MQTTAsync_subscribe(client_, entry.first.c_str(), entry.second.qos, &resp);
+        if (rc != MQTTASYNC_SUCCESS)
+            LOG_WARN("PahoTransport: resubscribe failed on topic " + entry.first +
+                     " rc=" + std::to_string(rc));
+        else
+            LOG_INFO("PahoTransport: resubscribed to " + entry.first);
+    }
 }
 
 int PahoTransport::onMessageArrived(void *ctx, char *topicName, int /*topicLen*/,
@@ -245,7 +279,7 @@ void PahoTransport::dispatchMessage(const std::string &topic, const std::string 
         auto it = subscriptions_.find(topic);
         if (it == subscriptions_.end())
             return;
-        cb = it->second;
+        cb = it->second.callback;
     }
     cb(topic, payload);
 }

@@ -325,25 +325,37 @@ int main(int argc, char *argv[])
                              dispatcher->onCommandMessage(topic, payload);
                          });
 
-    // Announce and initial state
-    telemetry->publishAnnounce();
-    telemetry->publishState();
-
-    // Publish initial IO values for all endpoints so subscribers see current state
-    for (auto &ep : registry->all())
+    auto republishIo = [&]()
     {
-        if (!ep->isAvailable()) continue;
-        const std::string &val = ep->lastValue();
-        if (!val.empty())
-            transport->publish(ep->resolvedTopic(), val,
-                               cfg.mqtt.qos, ep->retainEnabled());
-    }
+        telemetry->publishAnnounce();
+        telemetry->publishState();
+        for (auto &ep : registry->all())
+        {
+            if (!ep->isAvailable())
+                continue;
+            const std::string &val = ep->lastValue();
+            if (!val.empty())
+                transport->publish(ep->resolvedTopic(), val,
+                                   cfg.mqtt.qos, ep->retainEnabled());
+        }
+    };
+
+    republishIo();
 
     // ── main loop ─────────────────────────────────────────────────────────────
     LOG_INFO("main: bridge running (poll_interval=" + std::to_string(cfg.global.poll_interval_ms) + "ms)");
 
+    bool mqtt_was_connected = transport->isConnected();
     while (g_running)
     {
+        const bool mqtt_connected = transport->isConnected();
+        if (mqtt_connected && !mqtt_was_connected)
+        {
+            LOG_INFO("main: MQTT reconnected — republishing IO state");
+            republishIo();
+        }
+        mqtt_was_connected = mqtt_connected;
+
         for (auto &ep : registry->all())
         {
             if (!ep->isAvailable())

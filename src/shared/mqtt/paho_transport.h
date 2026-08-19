@@ -41,8 +41,10 @@ private:
     static int onMessageArrived(void *ctx, char *topicName, int topicLen,
                                 MQTTAsync_message *msg);
     static void onDisconnectSuccess(void *ctx, MQTTAsync_successData *data);
+    static void onReconnect(void *ctx, char *cause);
 
     void dispatchMessage(const std::string &topic, const std::string &payload);
+    void resubscribeAll();
 
     MqttConfig config_;
     MQTTAsync client_{nullptr};
@@ -57,7 +59,13 @@ private:
 
     std::atomic<bool> connected_{false};
 
+    struct Subscription
+    {
+        MessageCallback callback;
+        int qos{1};
+    };
+
     // Topic → subscription callback map
     mutable std::mutex sub_mutex_;
-    std::unordered_map<std::string, MessageCallback> subscriptions_;
+    std::unordered_map<std::string, Subscription> subscriptions_;
 };
