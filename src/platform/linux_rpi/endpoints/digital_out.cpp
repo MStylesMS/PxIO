@@ -1,14 +1,11 @@
 #include "digital_out.h"
+#include "../gpio/pin_spec.h"
 #include "../../../shared/log/logger.h"
 
-// ─── pin resolution helper ───────────────────────────────────────────────────
-// Supports "17" (native) and "bus_name:offset" (expander — returns offset).
 static unsigned int resolvePin(const std::string &pin_str)
 {
-    auto colon = pin_str.find(':');
-    if (colon != std::string::npos)
-        return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
-    return static_cast<unsigned int>(std::stoi(pin_str));
+    auto pin = parsePinOffset(pin_str);
+    return pin.value_or(0);
 }
 
 DigitalOut::DigitalOut(const GpioEndpointConfig &cfg,
@@ -20,8 +17,14 @@ bool DigitalOut::init()
 {
     resolved_topic_ = cfg_.io_topic; // overwritten by factory in main_rpi.cpp
 
-    unsigned int pin = resolvePin(cfg_.pin);
-    if (!gpio_->requestLine(pin, PinDirection::OUTPUT))
+    auto pin = parsePinOffset(cfg_.pin);
+    if (!pin)
+    {
+        LOG_WARN("DigitalOut: invalid pin spec '" + cfg_.pin + "' for endpoint gpio:" + cfg_.name);
+        available_ = false;
+        return false;
+    }
+    if (!gpio_->requestLine(*pin, PinDirection::OUTPUT))
     {
         LOG_WARN("DigitalOut: failed to request pin " + cfg_.pin + " for endpoint gpio:" + cfg_.name);
         available_ = false;
@@ -31,7 +34,7 @@ bool DigitalOut::init()
 
     // Apply configured default value
     int def = (cfg_.default_value == "1") ? 1 : 0;
-    gpio_->setValue(pin, def);
+    gpio_->setValue(*pin, def);
     last_value_ = std::to_string(def);
     return true;
 }

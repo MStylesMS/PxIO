@@ -1,4 +1,5 @@
 #include "digital_in.h"
+#include "../gpio/pin_spec.h"
 #include "../../../shared/log/logger.h"
 
 // ─── topic resolution helper ─────────────────────────────────────────────────
@@ -11,14 +12,10 @@ static std::string resolveTopic(const std::string &base_topic,
     return base_topic + "/" + io_topic;
 }
 
-// ─── pin resolution helper ───────────────────────────────────────────────────
-// Supports "17" (native) and "bus_name:offset" (expander — returns offset).
 static unsigned int resolvePin(const std::string &pin_str)
 {
-    auto colon = pin_str.find(':');
-    if (colon != std::string::npos)
-        return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
-    return static_cast<unsigned int>(std::stoi(pin_str));
+    auto pin = parsePinOffset(pin_str);
+    return pin.value_or(0);
 }
 
 // ─── construction ─────────────────────────────────────────────────────────────
@@ -36,8 +33,14 @@ bool DigitalIn::init()
     // builder in main_rpi.cpp.  Store the raw io_topic for now; caller sets it.
     resolved_topic_ = cfg_.io_topic; // overwritten by factory in main_rpi.cpp
 
-    unsigned int pin = resolvePin(cfg_.pin);
-    if (!gpio_->requestLine(pin, PinDirection::INPUT))
+    auto pin = parsePinOffset(cfg_.pin);
+    if (!pin)
+    {
+        LOG_WARN("DigitalIn: invalid pin spec '" + cfg_.pin + "' for endpoint gpio:" + cfg_.name);
+        available_ = false;
+        return false;
+    }
+    if (!gpio_->requestLine(*pin, PinDirection::INPUT))
     {
         LOG_WARN("DigitalIn: failed to request pin " + cfg_.pin + " for endpoint gpio:" + cfg_.name);
         available_ = false;
@@ -45,7 +48,7 @@ bool DigitalIn::init()
     }
     available_ = true;
     // Prime the debounce with the current value
-    int v = gpio_->getValue(pin);
+    int v = gpio_->getValue(*pin);
     last_published_ = candidate_value_ = (v >= 1) ? 1 : 0;
     last_published_ = std::to_string(candidate_value_);
     return true;

@@ -30,8 +30,11 @@ PxIO is one of seven Paradox products. All use the shared MQTT topic convention 
 ## Build (Current)
 
 ```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build --config Debug
+# Venue / Pi builds must use libgpiod (the default). Do not leave
+# PXIO_GPIO_BACKEND=mock in an existing build/ cache — that talks to
+# no real pins (SpyCatcher Moscow and TFD both need the real backend).
+cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPXIO_GPIO_BACKEND=libgpiod
+cmake --build build -j$(nproc)
 ```
 
 ## Project Status

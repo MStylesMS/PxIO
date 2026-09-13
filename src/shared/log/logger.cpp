@@ -104,9 +104,15 @@ void Logger::write(LogLevel level, const std::string &msg)
     std::string line = "[" + levelToString(level) + "] " + now_iso8601() + " " + msg + "\n";
 
     if (level >= LogLevel::WARN)
+    {
         std::cerr << line;
+        std::cerr.flush();
+    }
     else
+    {
         std::cout << line;
+        std::cout.flush();
+    }
 
     // File sink: WARN and ERROR only
     if (file_sink_.is_open() && level >= LogLevel::WARN)

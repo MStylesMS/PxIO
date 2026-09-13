@@ -1,6 +1,8 @@
 #include "mcp23017.h"
 #include "../../../shared/log/logger.h"
 
+#include <cstdio>
+
 Mcp23017::Mcp23017(const std::string &device, uint8_t address)
     : device_(device), address_(address) {}
 
@@ -22,7 +24,9 @@ bool Mcp23017::openChip(const std::string & /*chip_path*/)
     }
     iodir_[0] = iodir_[1] = 0xFF;
     olat_[0] = olat_[1] = 0x00;
-    LOG_INFO("Mcp23017: opened at " + device_ + " addr=0x" + std::to_string(address_));
+    char addr_hex[8];
+    std::snprintf(addr_hex, sizeof(addr_hex), "0x%02x", address_);
+    LOG_INFO("Mcp23017: opened at " + device_ + " addr=" + addr_hex);
     return true;
 }
 

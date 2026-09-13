@@ -40,17 +40,6 @@ static std::string resolveTopic(const std::string &base, const std::string &io)
 
 // ─── endpoint factory ─────────────────────────────────────────────────────────
 
-// Resolve pin string to numeric index.
-// Supports "17" (native) and "bus_name:offset" (expander — returns offset, bus
-// resolution is handled by the GpioProvider map in the provider context).
-static unsigned int resolvePin(const std::string &pin_str)
-{
-    auto colon = pin_str.find(':');
-    if (colon != std::string::npos)
-        return static_cast<unsigned int>(std::stoi(pin_str.substr(colon + 1)));
-    return static_cast<unsigned int>(std::stoi(pin_str));
-}
-
 // Build the GpioProvider map: bus name → provider.  Native GPIO uses the
 // shared default provider.  MCP23017 expanders get their own Mcp23017 instance.
 static std::unordered_map<std::string, std::shared_ptr<GpioProvider>>

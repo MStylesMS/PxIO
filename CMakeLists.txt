@@ -10,6 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set to "mock" to build with MockGpioProvider instead of LibgpiodProvider.
 set(PXIO_GPIO_BACKEND "libgpiod" CACHE STRING "GPIO backend: libgpiod or mock")
 option(PXIO_BUILD_TESTS "Build unit and integration tests" OFF)
+message(STATUS "PXIO_GPIO_BACKEND=${PXIO_GPIO_BACKEND}")
 
 # ── Dependencies ─────────────────────────────────────────────────────────────
 find_package(PkgConfig REQUIRED)
