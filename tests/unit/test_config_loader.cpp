@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <filesystem>
+#include <vector>
 
 #include "shared/config/config_loader.h"
 #include "shared/config/config_schema.h"
@@ -210,4 +211,45 @@ TEST(ConfigLoader, NonexistentFileFails)
 {
     AppConfig cfg;
     EXPECT_FALSE(ConfigLoader::load("/tmp/pio_does_not_exist_xyz.ini", cfg));
+}
+
+static const char *kKeypadExpanderIni = R"(
+[global]
+instance_name = pxio
+
+[mqtt]
+host = localhost
+client_id = pxio
+base_topic = pxio
+commands_topic = pxio/commands
+state_topic = pxio/state
+events_topic = pxio/events
+warnings_topic = pxio/warnings
+announce_topic = pxio/announce
+heartbeat_topic = pxio/heartbeat
+
+[compound:keypad]
+type = keypad_matrix
+io_topic = keypad
+rows = expander_b:0, expander_b:1, expander_b:2, expander_b:3
+cols = expander_b:4, expander_b:5, expander_b:6, expander_b:7
+keys = 1,2,3,A,4,5,6,B,7,8,9,C,*,0,#,D
+debounce_cycles = 5
+)";
+
+TEST(ConfigLoader, KeypadExpanderPinSpecs)
+{
+    auto path = writeTempIni(kKeypadExpanderIni);
+    AppConfig cfg;
+    ASSERT_TRUE(ConfigLoader::load(path, cfg));
+    ASSERT_EQ(cfg.compound_endpoints.size(), 1u);
+    const auto &c = cfg.compound_endpoints[0];
+    EXPECT_EQ(c.name, "keypad");
+    EXPECT_EQ(c.rows, (std::vector<int>{0, 1, 2, 3}));
+    EXPECT_EQ(c.cols, (std::vector<int>{4, 5, 6, 7}));
+    ASSERT_EQ(c.row_pins.size(), 4u);
+    EXPECT_EQ(c.row_pins[0], "expander_b:0");
+    ASSERT_EQ(c.col_pins.size(), 4u);
+    EXPECT_EQ(c.col_pins[3], "expander_b:7");
+    EXPECT_EQ(c.keys.size(), 16u);
 }

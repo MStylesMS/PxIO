@@ -5,6 +5,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cctype>
+#include <optional>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -65,6 +66,42 @@ static std::vector<int> splitCsvInt(const std::string &s)
     for (const auto &t : tokens)
         out.push_back(parseInt(t));
     return out;
+}
+
+// Native BCM ("17") or expander ("expander_b:0") → pin offset.
+static std::optional<int> parseOffsetToken(const std::string &t)
+{
+    auto colon = t.find(':');
+    const std::string num = (colon == std::string::npos) ? t : t.substr(colon + 1);
+    if (num.empty())
+        return std::nullopt;
+    try
+    {
+        std::size_t pos = 0;
+        int n = std::stoi(num, &pos, 0);
+        if (pos != num.size() || n < 0)
+            return std::nullopt;
+        return n;
+    }
+    catch (...)
+    {
+        return std::nullopt;
+    }
+}
+
+static void loadPinList(const std::string &value,
+                        std::vector<std::string> &specs,
+                        std::vector<int> &offsets)
+{
+    specs = splitCsv(value);
+    offsets.clear();
+    offsets.reserve(specs.size());
+    for (const auto &s : specs)
+    {
+        auto off = parseOffsetToken(s);
+        if (off)
+            offsets.push_back(*off);
+    }
 }
 
 // ─── INI parser ──────────────────────────────────────────────────────────────
@@ -257,9 +294,9 @@ bool ConfigLoader::load(const std::string &path, AppConfig &cfg)
                 c.retain_explicit = true;
             }
             else if (e.key == "rows")
-                c.rows = splitCsvInt(e.value);
+                loadPinList(e.value, c.row_pins, c.rows);
             else if (e.key == "cols")
-                c.cols = splitCsvInt(e.value);
+                loadPinList(e.value, c.col_pins, c.cols);
             else if (e.key == "keys")
                 c.keys = splitCsv(e.value);
             else if (e.key == "debounce_cycles")
@@ -397,6 +434,16 @@ bool ConfigLoader::validate(const AppConfig &cfg)
             if (c.cols.empty())
             {
                 LOG_ERROR("ConfigLoader: " + ctx + " missing cols");
+                ok = false;
+            }
+            if (!c.row_pins.empty() && c.row_pins.size() != c.rows.size())
+            {
+                LOG_ERROR("ConfigLoader: " + ctx + " rows has an unparseable pin spec");
+                ok = false;
+            }
+            if (!c.col_pins.empty() && c.col_pins.size() != c.cols.size())
+            {
+                LOG_ERROR("ConfigLoader: " + ctx + " cols has an unparseable pin spec");
                 ok = false;
             }
             if (c.keys.empty())

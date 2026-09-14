@@ -191,8 +191,16 @@ retain = false
 debounce_cycles = 16
 ```
 
+Rows and cols may be native BCM numbers or expander offsets on one bus:
+
+```ini
+rows = expander_b:0,expander_b:1,expander_b:2,expander_b:3
+cols = expander_b:4,expander_b:5,expander_b:6,expander_b:7
+```
+
 Rules:
 - rows and cols are explicitly configured
+- all row/col specs must share one provider (all native, or the same expander)
 - key payload is published as simple string
 
 #### patch_map

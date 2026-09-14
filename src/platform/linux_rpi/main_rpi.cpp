@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 #include <csignal>
 #include <thread>
 #include <chrono>
@@ -100,6 +101,36 @@ static std::shared_ptr<GpioProvider> providerForPin(
     return it->second;
 }
 
+// All pin specs in a compound must share one bus (native or one expander).
+static std::shared_ptr<GpioProvider> providerForPinList(
+    const std::vector<std::string> &specs,
+    const std::unordered_map<std::string, std::shared_ptr<GpioProvider>> &providers,
+    const std::string &ctx)
+{
+    std::string bus;
+    for (const auto &s : specs)
+    {
+        auto colon = s.find(':');
+        std::string b = (colon == std::string::npos) ? std::string() : s.substr(0, colon);
+        if (bus.empty() && !b.empty())
+            bus = b;
+        else if (!b.empty() && b != bus)
+        {
+            LOG_WARN("main: " + ctx + " mixes buses '" + bus + "' and '" + b + "' — skipped");
+            return nullptr;
+        }
+    }
+    if (bus.empty())
+        return providers.count("") ? providers.at("") : nullptr;
+    auto it = providers.find(bus);
+    if (it == providers.end())
+    {
+        LOG_WARN("main: no provider found for bus '" + bus + "' (" + ctx + ")");
+        return nullptr;
+    }
+    return it->second;
+}
+
 // Populate the EndpointRegistry from config. Skips endpoints that fail init.
 static void buildRegistry(
     const AppConfig &cfg,
@@ -153,8 +184,9 @@ static void buildRegistry(
 
         if (ccfg.type == "keypad_matrix")
         {
-            // For keypad_matrix, use the native GPIO provider (pins are integers)
-            auto provider = providers.count("") ? providers.at("") : nullptr;
+            std::vector<std::string> specs = ccfg.row_pins;
+            specs.insert(specs.end(), ccfg.col_pins.begin(), ccfg.col_pins.end());
+            auto provider = providerForPinList(specs, providers, "compound:" + ccfg.name);
             if (!provider)
                 continue;
             ep = std::make_shared<KeypadMatrix>(ccfg, provider,

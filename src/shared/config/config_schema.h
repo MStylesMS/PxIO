@@ -61,8 +61,12 @@ struct CompoundEndpointConfig
     bool retain = false;
     bool retain_explicit = false;
     // keypad_matrix
+    // Offset lists used by the scanner. row_pins / col_pins keep the original
+    // INI tokens ("17" or "expander_b:0") so the factory can pick a provider.
     std::vector<int> rows;
     std::vector<int> cols;
+    std::vector<std::string> row_pins;
+    std::vector<std::string> col_pins;
     std::vector<std::string> keys;
     int debounce_cycles = 16;
     // patch_map
